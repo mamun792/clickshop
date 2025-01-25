@@ -33,7 +33,7 @@ class PurchaseController extends Controller
 
     public function index()
     {
-        $purchase = Purchase::orderBy('purchase_name')->with('supplier')->get();
+      $purchase = Purchase::orderBy('purchase_name')->with('supplier')->get();
         // return $purchase;
         return view('admin.purchase.index', compact('purchase'));
     }
@@ -56,9 +56,11 @@ class PurchaseController extends Controller
 
             // Get products eligible for purchase
             $products = Product::where('stock_option', 'From Purchase')
-                ->orderBy('id', 'desc')
-                ->select('id', 'product_name', 'product_code', 'price')
-                ->get();
+            ->whereNull('purchase_id') // Correct method for checking null
+            ->orderBy('id', 'desc')
+            ->select('id', 'product_name', 'product_code', 'price')
+            ->get();
+        
 
             // Get suppliers
             $suppliers = Supplier::orderBy('supplier_name')->get();
@@ -101,14 +103,7 @@ class PurchaseController extends Controller
             $data['document'] = $this->uploadFile($request, 'document');
         }
 
-        // Store the validated data
-        $purchase = Purchase::create($data);
-
-        // Return JSON response with purchase_id
-        return response()->json([
-            'message' => 'Purchase created successfully.',
-            'purchase_id' => $purchase->id,  // Sending the purchase_id in the response
-        ]);
+      
     }
 
     public function edit($id)
@@ -122,7 +117,7 @@ class PurchaseController extends Controller
             ->where('stock_option', 'From Purchase')
             ->where('purchase_id', $purchase->id)
             ->orderBy('id', 'desc')
-            ->get(['id', 'product_name', 'product_code', 'price']);
+            ->get(['id', 'product_name', 'product_code', 'price','created_at']);
 
 
 

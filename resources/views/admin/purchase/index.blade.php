@@ -14,7 +14,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Product</th>
+                                <th>Purchase Name</th>
                                 <th>Purchase Date</th>
                                 <th>Invoice Number</th>
                                 <th>Supplier</th>
@@ -27,12 +27,25 @@
                             @foreach($purchase as $index=>$item)
                             <tr>
                                 <td>{{$index+1}}</td>
-                                <td>{{$item->purchase_name}}</td>
-                                <td>{{$item->purchase_date}}</td>
-                                <td>{{$item->invoice_number}}</td>
+                                
+                            
+                                <td>{{$item->purchase_name}}</td> 
+                                <td>{{$item->purchase_date}}</td> 
+                            
+                                <td>
+                                    <strong>{{ $item->invoice_number }}</strong> 
+                                    <br>
+                                    <small class="text-muted"> 
+                                        {{ $item->created_at->diffForHumans() }}
+                                    </small>
+                                </td>
+                                
                                 <td>{{$item->supplier->supplier_name}}</td>
                                 <td>
-                                    {{$item->comment}}
+                                    <span >
+                                        {{ $item->comment == 0 ? 'No Comment' : $item->comment }}
+                                    </span>
+                                    
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Action Buttons">
