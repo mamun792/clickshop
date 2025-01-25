@@ -528,7 +528,7 @@
                                 ${existingData ? '' : 'disabled'}>
                             <label class="form-check-label">
                                 ${option.name}
-                                ${existingData && existingData.sold_quantity > 0 ? 
+                                ${existingData && existingData.sold_quantity > 0 ?
                                     `<span class="text-muted">(${existingData.sold_quantity} sold)</span>` : ''}
                             </label>
                         </div>
@@ -692,7 +692,7 @@
                             ${existingCombo ? '' : 'disabled'}>
                         <label class="form-check-label">
                             ${displayName}
-                            ${totals.totalSoldQuantity > 0 ? 
+                            ${totals.totalSoldQuantity > 0 ?
                                 `<span class="text-muted">(${totals.totalSoldQuantity} sold)</span>` : ''}
                         </label>
                     </div>
@@ -823,10 +823,10 @@
 
             <div class="col-md-12">
                 <label for="stock_option" class="form-label">Select Stock Option</label>
-                <select id="stock_option" class="form-select" name="stock_option">
+                <select disabled  id="stock_option" class="form-select" name="stock_option">
 
 
-                    <option value="Manual" {{$product->stock_option == 'Manual' ? 'selected' : '' }}>Manual</option>
+                    <option alue="Manual" {{$product->stock_option == 'Manual' ? 'selected' : '' }}>Manual</option>
 
                     <option value="From Purchase" {{$product->stock_option == 'From Purchase' ? 'selected' : '' }}>From Purchase</option>
 
@@ -969,7 +969,7 @@
 
     </div>
 
-  
+
     @include('admin.products.imageupdate')
     <div class="card">
 

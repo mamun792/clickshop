@@ -168,9 +168,9 @@
 
 
 
-                <div class="card">
+                <div class="card" id="attributeForm">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body" >
 
 
                             <!-- Attribute Selection Tabs -->
@@ -236,7 +236,7 @@
 
                             <hr />
 
-                            <div class="row">
+                            <div class="row" id="purchaseDetails" style="display: none;">
 
 
 
@@ -659,26 +659,26 @@
 
                     <div class="card-body">
 
-                        <div class="col-md-12">
-                            <label for="stock_option" class="form-label">Select Stock Option <span
-                                    style="font-weight:bold; color: red">*</span> </label>
-                            <select id="stock_option" class="form-select" name="stock_option">
 
+
+                        <div class="col-md-12">
+                            <label for="stock_option" class="form-label">Select Stock Option
+                                <span style="font-weight:bold; color: red">*</span>
+                            </label>
+                            <select id="stock_option" class="form-select" name="stock_option">
                                 <option value="Manual">Manual</option>
                                 <option value="From Purchase">From Purchase</option>
-
                             </select>
                             @error('stock_option')
-                            <div class="text-danger">{{ $message }}</div>
+                                <div class="text-danger">{{ $message }}</div>
                             @enderror
-
                         </div>
 
-                        <div class="col-md-12 mt-2">
+                        <div class="col-md-12 mt-2" >
                             <label for="quantity" class="form-label">Quantity <span
                                     style="font-weight:bold; color: red">*</span></label>
                             <div class="position-relative">
-                                <input type="number" class="form-control" id="quantity" name="quantity"
+                                <input type="number" class="form-control quantity_hidden"  name="quantity"
                                     value="{{ old('quantity') ?? 0 }}">
                                 <span class="position-absolute top-50 translate-middle-y"></span>
                             </div>
@@ -958,86 +958,6 @@
     });
 </script>
 
-<!-----purchase Based Script--->
-
-{{-- <script>
-    $(document).ready(function() {
-        // Select the dropdown and form fields
-        const $stockOptionSelect = $('#stock_option');
-        const $productNameInput = $('#product_name');
-        const $priceInput = $('#price');
-        const $quantityInput = $('#quantity');
-
-
-        const $purchaseProductCode = $('#purchase_product_code');
-        const $productCodeInput = $('#product_code');
-        const $purchaseProductCodeGroup = $('#purchase_product_code_group');
-        const $loadButton = $('#loadButton');
-
-
-        // Function to toggle disable/enable fields
-        function toggleFields() {
-            if ($stockOptionSelect.val() === 'From Purchase') {
-                $productNameInput.prop('readonly', true);
-                $priceInput.prop('readonly', true);
-                $quantityInput.prop('readonly', true);
-
-                $productCodeInput.hide(); // Hide the product code input
-                $purchaseProductCodeGroup.show(); // Show the purchase product code input group
-
-            } else {
-                $productNameInput.prop('readonly', false);
-                $priceInput.prop('readonly', false);
-                $quantityInput.prop('readonly', false);
-
-                $productCodeInput.show(); // Show the product code input
-                $purchaseProductCodeGroup.hide(); // Hide the purchase product code input group
-            }
-        }
-
-        // Initial toggle when the page loads
-        toggleFields();
-
-        // Event listener for change in stock option
-        $stockOptionSelect.change(toggleFields);
-
-        $loadButton.click(function() {
-
-            const productCode = $purchaseProductCode.val();
-
-            if (productCode.trim() === '') {
-                alert('Please enter a product code.');
-                return;
-            }
-
-            // AJAX request to fetch data
-
-
-            $.ajax({
-                url: `/admin/get-purchase-data/${productCode}`,
-                method: 'GET',
-                success: function(response) {
-                    console.log(response)
-                    if (response.status === 'success') {
-                        // Populate the fields with the data
-                        $productNameInput.val(response.data.name);
-                        $priceInput.val(response.data.price);
-                        $quantityInput.val(response.data.quantity);
-                    } else {
-                        alert('Product code not found.');
-                    }
-                },
-                error: function() {
-                    alert('Error fetching data. Please try again.');
-                }
-            });
-
-
-
-
-        })
-    });
-</script> --}}
 
 
 <!--summernot editor script---->
@@ -1058,5 +978,23 @@
             ]
         });
     });
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const stockOptionSelect = document.getElementById('stock_option');
+    const attributeForm = document.getElementById('attributeForm');
+    const quantityInput = document.querySelector('.quantity_hidden');
+    stockOptionSelect.addEventListener('change', function() {
+        if (stockOptionSelect.value === 'From Purchase') {
+            attributeForm.style.display = 'none';
+            quantityInput.setAttribute('type', 'hidden');
+        } else {
+            attributeForm.style.display = 'block';
+            quantityInput.setAttribute('type', 'number');
+        }
+    });
+});
+
 </script>
 @endpush

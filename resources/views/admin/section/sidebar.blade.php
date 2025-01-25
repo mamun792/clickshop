@@ -260,7 +260,7 @@
     </ul>
 </li>
 
-@endif 
+@endif
 
 
 
@@ -627,9 +627,6 @@ canAccess(['SaleSupport']) || canAccess(['ShippingDelivery']) )
         </li>
         @endif
 
-
-
-
         @if(canAccess(['RefundPolicy']))
 
 </li> <a href="{{ route('admin.pages.refund.policy') }}#page"><i class='bx bx-radio-circle'></i>Refund
@@ -651,18 +648,6 @@ canAccess(['SaleSupport']) || canAccess(['ShippingDelivery']) )
         Delivery</a>
 </li>
 @endif
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
 
 
 </ul>
