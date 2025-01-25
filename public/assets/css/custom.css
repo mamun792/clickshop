@@ -1,0 +1,29 @@
+/*data table*/
+
+span.select2-selection.select2-selection--single.select2-selection--clearable {
+    height: 38px !important;
+}
+
+span#select2-user-search-container {
+    height: 38px !important;
+}
+
+span.select2-selection.select2-selection--single {
+    height: 38px !important;
+}
+
+input.select2-search__field {
+    position: relative;
+    z-index: 999999999999999;
+}
+
+
+
+
+select#order_status {
+    text-transform: capitalize;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    background: unset;
+}

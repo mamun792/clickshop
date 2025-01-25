@@ -1,0 +1,23 @@
+<IfModule mod_rewrite.c>
+    # Enable URL rewriting
+    RewriteEngine On
+
+    # Redirect everything to the public directory
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ /public/$1 [L]
+
+    # Handle requests for static files (images, CSS, JS)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirect all other requests to index.php
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Ensure that the .htaccess file is applied to all directories
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
