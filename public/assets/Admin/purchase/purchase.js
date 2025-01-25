@@ -1,33 +1,33 @@
-$(document).ready(function() {
+$(document).ready(function () {
     $('#productSelect').select2();
 
-//here i need to disable other option ofchange type more than one the option issingleVariant and ismultipleVariants
-        const isSingleVariant = $('#singleVariant');
-        const ismultipleVariants = $('#multipleVariants');
+    //here i need to disable other option ofchange type more than one the option issingleVariant and ismultipleVariants
+    const isSingleVariant = $('#singleVariant');
+    const ismultipleVariants = $('#multipleVariants');
 
 
-        ismultipleVariants.on('change', function() {
-            if (ismultipleVariants.is(':checked')) {
-                // disable ismultipleVariants bttuon
-                $('#singleVariant').prop('disabled', true);
+    ismultipleVariants.on('change', function () {
+        if (ismultipleVariants.is(':checked')) {
+            // disable ismultipleVariants bttuon
+            $('#singleVariant').prop('disabled', true);
 
-            }
-        });
-        isSingleVariant.on('change', function() {
-            if (isSingleVariant.is(':checked')) {
-                // disable ismultipleVariants bttuon
-                $('#multipleVariants').prop('disabled', true);
+        }
+    });
+    isSingleVariant.on('change', function () {
+        if (isSingleVariant.is(':checked')) {
+            // disable ismultipleVariants bttuon
+            $('#multipleVariants').prop('disabled', true);
 
-            }
-        });
+        }
+    });
 
 
 
-        // reset the radio buttons when the form is submitted
-        $('#productSelect').on('change', function() {
-            isSingleVariant.prop('disabled', false);
-            ismultipleVariants.prop('disabled', false);
-        });
+    // reset the radio buttons when the form is submitted
+    $('#productSelect').on('change', function () {
+        isSingleVariant.prop('disabled', false);
+        ismultipleVariants.prop('disabled', false);
+    });
 
 
     function combineAttributes(attributes) {
@@ -48,7 +48,7 @@ $(document).ready(function() {
         }, [{}]);
     }
 
-    $('#addProductButton').on('click', function() {
+    $('#addProductButton').on('click', function () {
         const productElement = $('#productSelect').find(':selected');
         const productCode = productElement.data('code');
         const productName = productElement.text();
@@ -58,7 +58,7 @@ $(document).ready(function() {
             name: $(el).data('name'),
             value: el.value,
             attributeId: $(el).data('attribute-id'),
-            optionId: $(el).attr('id').split('_')[1],
+            optionId: $(el).data('option-id'),
         })).get();
 
         const isMultiple = $('#multipleVariants').is(':checked');
@@ -81,9 +81,17 @@ $(document).ready(function() {
                 attributeIds = selectedAttributes.map(attr => attr.attributeId).join(',');
                 optionIds = selectedAttributes.map(attr => attr.optionId).join(',');
             } else {
+                console.log(variant);
+                console.log(selectedAttributes);
+
                 // For single variants, only include the specific attribute and option ID
-                const variantKey = Object.keys(variant)[0];
-                const matchingAttribute = selectedAttributes.find(attr => attr.name === variantKey);
+
+                const variantKey = Object.keys(variant)[0]; // This will give "color"
+                const variantValue = variant[variantKey]; // This will give "red"
+
+
+                const matchingAttribute = selectedAttributes.find(attr => attr.value === variantValue);
+
                 attributeIds = matchingAttribute ? matchingAttribute.attributeId : '';
                 optionIds = matchingAttribute ? matchingAttribute.optionId : '';
             }
@@ -108,8 +116,13 @@ $(document).ready(function() {
                             <input type="hidden" name="attribute_ids[]" value="${attributeIds}">
                             <input type="hidden" name="option_ids[]" value="${optionIds}">
                         </td>
-                        <td><input type="number" class="form-control" name="quantity[]" min="1" step="1"></td>
-                        <td><input type="number" class="form-control" name="price[]" min="0" step="0.01"></td>
+                        <td>
+                         <input type="number" class="form-control" name="quantity[]" min="1" step="1" >
+                           <span class="text-danger" id="quantity_error"></span>
+                        </td>
+                        <td><input type="number" class="form-control" name="price[]" min="0" step="0.01" >
+                         <span class="text-danger" id="price_error"></span>
+                        </td>
                         <td><button class="btn btn-sm btn-danger remove-row">Remove</button></td>
                     </tr>
                 `);
@@ -119,7 +132,7 @@ $(document).ready(function() {
         $('#totalAmount').text(`৳${total.toFixed(2)}`);
     });
 
-    $(document).on('click', '.remove-row', function() {
+    $(document).on('click', '.remove-row', function () {
         const row = $(this).closest('tr');
         const price = parseFloat(row.find('input[type="number"]').eq(1).val());
         let total = parseFloat($('#totalAmount').text().replace('৳', ''));
@@ -129,7 +142,7 @@ $(document).ready(function() {
     });
 });
 
-$('#selectAll').on('change', function() {
+$('#selectAll').on('change', function () {
     const isChecked = $(this).is(':checked');
     $('.select-row').prop('checked', isChecked);
 });
@@ -142,15 +155,37 @@ $('#submitSelectedButton').on('click', async function () {
         // Prepare form data
         const formData = prepareFormData(selectedProducts);
 
+
+
+        // Perform validation
+        // if (!validateFormData(formData)) {
+        //     return;
+        // }
+
         // Submit the data
         await submitFormData(formData);
+
+
+        // Clear the selected rows
+         $('.select-row:checked').closest('tr').remove();
 
         alert('Purchase submitted successfully');
     } catch (error) {
         console.error(error);
-        alert('Failed to submit the purchase');
+        if (error.response && error.response.status === 422) {
+            // Handle validation errors
+            const validationErrors = error.response.data.errors;
+            Object.keys(validationErrors).forEach(fieldName => {
+                showError(fieldName, validationErrors[fieldName][0]);
+                console.log('error', validationErrors[fieldName][0]);
+            });
+        } else {
+            alert('Failed to submit the purchase. Please try again.');
+        }
     }
 });
+
+
 
 // Function to collect selected product data
 function getSelectedProducts() {
@@ -173,10 +208,10 @@ function prepareFormData(selectedProducts) {
     formData.append('purchase_name', $('#product').val());
     formData.append('purchase_date', $('#purchase_date').val());
     formData.append('invoice_number', $('#invoice_number').val());
-    formData.append('document', $('#document')[0]?.files[0] || ''); // Optional file handling
+    formData.append('document', $('#document')[0]?.files[0] || '');
     formData.append('comment', $('#comment').val());
     formData.append('supplier_id', $('#supplier_id').val());
-    formData.append('products', JSON.stringify(selectedProducts)); // Serialize products
+    formData.append('products', JSON.stringify(selectedProducts));
 
     return formData;
 }
@@ -194,13 +229,86 @@ async function submitFormData(formData) {
 
     return response.data;
 
-    // Clear the selected rows
-    $('.select-row:checked').closest('tr').remove();
-    $('#totalAmount').text('৳0.00');
+
 }
 
-    // Submit the selected products to the server
 
-    // Clear the selected rows
+// Function to validate form data
+function validateFormData(formData) {
+    let isValid = true;
+
+    // Clear previous error messages
+    clearErrorMessages();
+
+    // Purchase name validation
+    if (formData.get('purchase_name') === '') {
+        showError('purchase_name', 'Purchase name is required');
+        isValid = false;
+    }
+
+    // Purchase date validation
+    if (formData.get('purchase_date') === '') {
+        showError('purchase_date', 'Purchase date is required');
+        isValid = false;
+    }
+
+    // Invoice number validation
+    if (formData.get('invoice_number') === '') {
+        showError('invoice_number', 'Invoice number is required');
+        isValid = false;
+    }
+
+    // Supplier ID validation
+    if (formData.get('supplier_id') === '') {
+        showError('supplier_id', 'Supplier ID is required');
+        isValid = false;
+    }
+
+    // Products validation
+    if (formData.get('products') === '') {
+        showError('products', 'Products are required');
+        isValid = false;
+    }
+
+    // Quantity validation
+    const quantities = formData.getAll('quantity[]');
+    quantities.forEach((quantity, index) => {
+        const quantityErrorElement = document.querySelectorAll('#quantity_error')[index];
+        if (quantity === '' || parseFloat(quantity) <= 0) {
+            if (quantityErrorElement) {
+                quantityErrorElement.innerText = `Invalid quantity for product ${index + 1}`;
+            }
+            isValid = false;
+        }
+    });
+
+    //Price validation
+    const prices = formData.getAll('price[]');
+    prices.forEach((price, index) => {
+        const priceErrorElement = document.querySelectorAll('#price_error')[index];
+        if (price === '' || parseFloat(price) <= 0) {
+            if (priceErrorElement) {
+                priceErrorElement.innerText = `Invalid price for product ${index + 1}`;
+            }
+            isValid = false;
+        }
+    });
+
+    return isValid;
+}
+
+function showError(fieldName, message) {
+    const errorElement = document.getElementById(`${fieldName}_error`);
+    if (errorElement) {
+        errorElement.innerText = message;
+    }
+}
+
+function clearErrorMessages() {
+    const errorElements = document.querySelectorAll('.text-danger');
+    errorElements.forEach(element => {
+        element.innerText = '';
+    });
+}
 
 

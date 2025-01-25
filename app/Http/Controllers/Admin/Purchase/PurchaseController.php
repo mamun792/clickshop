@@ -9,10 +9,12 @@ use App\Models\PurchaseGroup;
 use App\Models\Supplier;
 use App\Services\Admin\Product\ProductService;
 use App\Services\Admin\Purchase\PurchaseService;
-use App\Services\Admin\Purchase\PurchaseServiceInterface;
+use App\Http\Requests\Admin\Purchase\PurchaseRequest;
+use App\Models\ProductAttribute;
 use Illuminate\Http\Request;
+
 use App\Traits\FileUploadTrait;
-use Illuminate\Validation\Rule;
+
 use Illuminate\Support\Facades\Log;
 
 class PurchaseController extends Controller
@@ -31,7 +33,7 @@ class PurchaseController extends Controller
 
     public function index()
     {
-       $purchase = Purchase::orderBy('purchase_name')->with('supplier')->get();
+        $purchase = Purchase::orderBy('purchase_name')->with('supplier')->get();
         // return $purchase;
         return view('admin.purchase.index', compact('purchase'));
     }
@@ -69,18 +71,26 @@ class PurchaseController extends Controller
         }
     }
 
-    public function store(Request $request)
+
+    // PurchaseRequest
+    public function store(PurchaseRequest $request)
     {
 
-       Log::info($request->all());
-       return $request->all();
 
-        $validatedData=$request->all();
+
+        $validatedData = $request->validated();
+        // Log::info($validatedData);
+        // //    return $request->all();
+
+        // die();
 
         $formattedProducts = $this->purchaseService->createPurchase($validatedData);
-        // Log::info($formattedProducts);
+        //    Log::info($formattedProducts);
 
-
+        return response()->json([
+            'message' => 'Purchase created successfully.',
+            'purchase_id' => $formattedProducts['purchase_id'],
+        ]);
 
         die();
         return $request->all();
@@ -103,53 +113,53 @@ class PurchaseController extends Controller
 
     public function edit($id)
     {
-        $purchase = Purchase::where('id', $id)->with('purchase_group')->first();
+        $purchase = Purchase::findOrFail($id);
+
+
+        $products = Product::with(['attributes' => function ($query) {
+            $query->where('status', 'enable')->with(['attribute', 'option']);
+        }])
+            ->where('stock_option', 'From Purchase')
+            ->where('purchase_id', $purchase->id)
+            ->orderBy('id', 'desc')
+            ->get(['id', 'product_name', 'product_code', 'price']);
+
+
+
+
+
+
+
         $suppliers = Supplier::orderBy('supplier_name')->get();
 
-        return view('admin.purchase.edit', compact('purchase', 'suppliers'));
+        return view('admin.purchase.edit', compact('products', 'suppliers'));
     }
 
 
-    public function update(Request $request, $id)
+    public function updatePurchase(Request $request)
     {
-        $purchase = Purchase::findOrFail($id);
+        foreach ($request->attribute_ids as $index => $attributeId) {
+            $productAttribute = ProductAttribute::findOrFail($attributeId);
 
-        $data = $request->validate([
-            'purchase_name' => 'required|string|max:255',
-            'purchase_date' => 'required|date',
-            'invoice_number' => 'required|string|max:255|unique:purchases,invoice_number,' . $purchase->id, // Unique excluding current record by id
-            'supplier_id' => 'required|integer|exists:suppliers,id', // Check if supplier_id exists in suppliers table
-            'document' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:2048', // Optional file with specific types
-            'comment' => 'nullable|string|max:500',
-        ]);
-
-        if ($request->hasFile('document')) {
-            // Delete the old document if it exists
-            if ($purchase->document && file_exists(public_path($purchase->document))) {
-                unlink(public_path($purchase->document));
-            }
-
-            // Upload and store the new document path
-            $data['document'] = $this->uploadFile($request, 'document');
+            // Update the attribute with new values
+            $productAttribute->update([
+                'quantity' => $request->quantities[$index],
+                'price' => $request->prices[$index],
+            ]);
         }
 
-        // Update the purchase record with validated data
-        $purchase->update($data);
+        // $purchase->update($request->all());
 
-        // Return JSON response with a success message
-        return response()->json([
-            'message' => 'Purchase updated successfully.',
-            'purchase_id' => $purchase->id,
-        ]);
+        return back()->with('success', 'Purchase updated successfully');
     }
 
 
     public function destroy($id)
     {
 
+        Product::where('purchase_id', $id)->update(['purchase_id' => null]);
 
-
-        Purchase::find($id)->delete();
+        Purchase::findOrFail($id)->delete();
 
         return redirect()->back()->with('success', 'Purchase item deleted');
     }
@@ -253,7 +263,7 @@ class PurchaseController extends Controller
                 'value' => $value,
                 'attribute_id' => $attributeIds[$index] ?? null,
                 'option_id' => $optionIds[$index] ?? null,
-                'price' => $rawProduct['price']  ,
+                'price' => $rawProduct['price'],
                 'quantity' => $rawProduct['quantity']
             ];
         }

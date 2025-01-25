@@ -31,6 +31,9 @@ class PurchaseService implements PurchaseServiceInterface
 
             $products = $this->formatPurchaseProducts($data['products']);
 
+            // Log::info('formatted products', ['products' => json_encode($products)]);
+            // die();
+
             // Log the number of products being processed
 
 
@@ -56,7 +59,11 @@ class PurchaseService implements PurchaseServiceInterface
             // Retrieve the product using the product_id from $productData
             $productId = $singleProduct['product_id'];
             $product = Product::findOrFail($productId);
-            // $product = Product::findOrFail($productId);
+             $product->purchase_id=$purchase->id;
+           //save the purchase id to the product
+            $product->save();
+
+
             $this->handleSingleAttributeProduct($product, $singleProduct);
         }
 
@@ -64,6 +71,10 @@ class PurchaseService implements PurchaseServiceInterface
             // Retrieve the product using the product_id from $productData
             $productId = $multiProduct['product_id'];
             $product = Product::findOrFail($productId);
+            $product->purchase_id=$purchase->id;
+            //save the purchase id to the product
+            $product->save();
+
 
 
             // Log the product ID
@@ -78,13 +89,14 @@ class PurchaseService implements PurchaseServiceInterface
 
         DB::transaction(function () use ($product, $productData) {
             // Log the entire product data for debugging
-            Log::info($productData);
+            // Log::info($productData);
 
+            $totalQuantity = 0;
             // Access and process the attributes
             $attributes = $productData['attributes'];
             foreach ($attributes as $attribute) {
                 // Log each attribute for debugging
-                Log::info('Processing Attribute:', $attribute);
+                // Log::info('Processing Attribute:', $attribute);
 
                 // Example: Save attribute data to a database
                 DB::table('product_attributes')->insert([
@@ -97,10 +109,15 @@ class PurchaseService implements PurchaseServiceInterface
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+
+                // Increment the total quantity
+                $totalQuantity += $attribute['quantity'];
+
             }
 
-            // Log success message after processing
-            Log::info('Attributes processed successfully.');
+            // Increment the product quantity
+            $product->increment('quantity', $totalQuantity);
+
         });
     }
 

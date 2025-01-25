@@ -23,16 +23,19 @@
                         <label for="product" class="form-label">Purchase Product Name</label>
                         <input type="text" class="form-control" id="product" name="purchase_name" required
                             value="{{ old('purchase_name') }}">
+                            <span id="purchase_name_error" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label for="purchase_date" class="form-label">Purchase Date</label>
                         <input type="date" class="form-control" id="purchase_date" required name="purchase_date"
                             value="{{ old('purchase_date') }}">
+                            <span id="purchase_date_error" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label for="invoice_number" class="form-label">Invoice Number</label>
                         <input type="text" class="form-control" id="invoice_number" required
                             name="invoice_number" value="{{ old('invoice_number') }}">
+                            <span id="invoice_number_error" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-2">
@@ -56,6 +59,7 @@
                                 <option value="{{ $supplier->id }}">{{ $supplier->supplier_name }}</option>
                             @endforeach
                         </select>
+                        <span id="supplier_id_error" class="text-danger"></span>
                     </div>
 
                     <!-- Product Selection -->
@@ -68,6 +72,7 @@
                                 </option>
                             @endforeach
                         </select>
+                        <span id="productSelectError" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -99,6 +104,7 @@
                                         <input type="checkbox" class="form-check-input attribute-checkbox"
                                             id="attr_{{ $option['id'] }}" value="{{ $option['name'] }}"
                                             data-attribute-id="{{ $option['attribute_id'] }}"
+                                            data-option-id="{{ $option['id'] }}"
                                             data-name="{{ $attribute['name'] }}">
                                         <label class="form-check-label" for="attr_{{ $option['id'] }}">
                                             {{ $option['name'] }}

@@ -25,7 +25,7 @@ class ProductAttribute extends Model
             }
         });
     }
-    
+
     //
    // protected $guarded = [];
 
@@ -88,7 +88,10 @@ class ProductAttribute extends Model
 
 
 
-
+    public function option()
+    {
+        return $this->belongsTo(AttributeOption::class, 'attribute_option_id');
+    }
 
 
 

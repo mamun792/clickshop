@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('purchase_name');
             $table->date('purchase_date');
-            $table->string('invoice_number')->index(); // Added index
+            $table->string('invoice_number')->unique();
 
             $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
 
