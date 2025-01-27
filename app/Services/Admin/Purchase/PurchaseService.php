@@ -16,7 +16,7 @@ class PurchaseService implements PurchaseServiceInterface
 {
     protected $purchaseRepository;
 
-    public function __construct(PurchaseRepository $purchaseRepository)
+    public function __construct(PurchaseRepositoryInterface $purchaseRepository)
     {
         $this->purchaseRepository = $purchaseRepository;
     }
@@ -31,15 +31,9 @@ class PurchaseService implements PurchaseServiceInterface
 
             $products = $this->formatPurchaseProducts($data['products']);
 
-            // Log::info('formatted products', ['products' => json_encode($products)]);
-            // die();
 
-            // Log the number of products being processed
-
-
-            // foreach ($products as $product) {
             $this->processPurchaseProduct($purchase, $products);
-            // }
+
 
             return [
                 'message' => 'Purchase created successfully.',
@@ -50,8 +44,6 @@ class PurchaseService implements PurchaseServiceInterface
 
     private function processPurchaseProduct($purchase, array $productData)
     {
-
-        // Loop through each product data and access the product_id
 
 
 
@@ -95,12 +87,9 @@ class PurchaseService implements PurchaseServiceInterface
             // Access and process the attributes
             $attributes = $productData['attributes'];
             foreach ($attributes as $attribute) {
-                // Log each attribute for debugging
-                // Log::info('Processing Attribute:', $attribute);
 
-                // Example: Save attribute data to a database
                 DB::table('product_attributes')->insert([
-                    'product_id' => $product['id'], // Assuming product is an array or object with `id`
+                    'product_id' => $product['id'],
                     'attribute_id' => $attribute['attribute_id'],
                     'attribute_option_id' => $attribute['option_id'],
                     'price' => $attribute['price'],

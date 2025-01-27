@@ -11,7 +11,9 @@ use App\Services\Admin\Product\ProductService;
 use App\Services\Admin\Purchase\PurchaseService;
 use App\Http\Requests\Admin\Purchase\PurchaseRequest;
 use App\Models\ProductAttribute;
+use App\Services\Admin\Purchase\PurchaseServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Traits\FileUploadTrait;
 
@@ -24,7 +26,7 @@ class PurchaseController extends Controller
     protected $productService;
     protected $purchaseService;
 
-    public function __construct(ProductService $productService, PurchaseService $purchaseService)
+    public function __construct(ProductService $productService, PurchaseServiceInterface $purchaseService)
     {
         $this->productService = $productService;
         $this->purchaseService = $purchaseService;
@@ -56,18 +58,18 @@ class PurchaseController extends Controller
 
             // Get products eligible for purchase
             $products = Product::where('stock_option', 'From Purchase')
-            ->whereNull('purchase_id') // Correct method for checking null
+            ->whereNull('purchase_id')
             ->orderBy('id', 'desc')
             ->select('id', 'product_name', 'product_code', 'price')
             ->get();
-        
+
 
             // Get suppliers
             $suppliers = Supplier::orderBy('supplier_name')->get();
 
             return view('admin.purchase.create', compact('attributes', 'products', 'suppliers'));
         } catch (\Exception $e) {
-            // \Log::error('Error in purchase create: ' . $e->getMessage());
+
             return redirect()->back()
                 ->with('error', 'Error loading purchase form. Please try again.');
         }
@@ -81,10 +83,10 @@ class PurchaseController extends Controller
 
 
         $validatedData = $request->validated();
-        // Log::info($validatedData);
-        // //    return $request->all();
+        if ($request->hasFile('document')) {
+            $validatedData['document'] = $this->uploadFile($request->file('document'), 'document');
+        }
 
-        // die();
 
         $formattedProducts = $this->purchaseService->createPurchase($validatedData);
         //    Log::info($formattedProducts);
@@ -94,16 +96,7 @@ class PurchaseController extends Controller
             'purchase_id' => $formattedProducts['purchase_id'],
         ]);
 
-        die();
-        return $request->all();
 
-
-        // Upload image and get path if image is provided
-        if ($request->hasFile('document')) {
-            $data['document'] = $this->uploadFile($request, 'document');
-        }
-
-      
     }
 
     public function edit($id)
@@ -152,9 +145,17 @@ class PurchaseController extends Controller
     public function destroy($id)
     {
 
-        Product::where('purchase_id', $id)->update(['purchase_id' => null]);
+        DB::transaction(function () use ($id) {
+            // Update products associated with the purchase to remove the purchase_id
+          $product=  Product::where('purchase_id', $id);
+            // delete() product
+            $product->delete();
 
-        Purchase::findOrFail($id)->delete();
+
+            // Delete the purchase record
+            Purchase::findOrFail($id)->delete();
+        });
+
 
         return redirect()->back()->with('success', 'Purchase item deleted');
     }

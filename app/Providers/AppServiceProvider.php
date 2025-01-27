@@ -61,7 +61,7 @@ use App\Services\Admin\SidebarSlider\SidebarSliderServiceInterface;
 use App\Services\Admin\Smtp\SmtpSettingService;
 use App\Services\Admin\Smtp\SmtpSettingServiceInterface;
 use Illuminate\Support\ServiceProvider;
-use App\Models\CourierSetting;
+
 use App\Repositories\Admin\Product\ProductRepository;
 use App\Repositories\Admin\Product\ProductRepositoryInterface;
 use App\Repositories\Admin\Purchase\PurchaseRepository;
@@ -178,9 +178,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
         $this->app->bind(ProductService::class);
 
-        //CourierConfigService
-
-        //   $this->app->bind(CourierConfigService::class);
+          //PurchaseRepository
+          $this->app->bind(PurchaseRepositoryInterface::class, PurchaseRepository::class);
+          $this->app->bind(PurchaseServiceInterface::class, PurchaseService::class);
+          
 
 
         // avater
@@ -195,9 +196,7 @@ class AppServiceProvider extends ServiceProvider
             $this->app->bind(RolePermissionService::class);
             $this->app->bind(RoleRepository::class);
 
-            //PurchaseRepository
-            $this->app->bind(PurchaseRepositoryInterface::class, PurchaseRepository::class);
-            $this->app->bind(PurchaseServiceInterface::class, PurchaseService::class);
+
         });
     }
 
