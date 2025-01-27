@@ -524,12 +524,7 @@ async function handleCheckout() {
             clearCart();
 
 
-            // clearCart();
 
-            // Redirect to the order details page
-            // oute::get('/{order}/invoice', [ManageOrdersController::class, 'invoice'])->name('invoice');
-            // window.location.href = `/admin/orders/${response.data.invoice_id}`;
-            //  window.location.reload();
         } else {
             alert('Failed to checkout');
         }
@@ -593,7 +588,7 @@ async function handleclearCart() {
         }
     });
 
-    
+
 
 }
 
@@ -676,7 +671,6 @@ function showToast(icon, text) {
             }
         });
     }
-
 
 
 

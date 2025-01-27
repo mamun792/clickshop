@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_item_id')->constrained()->onDelete('cascade');
             $table->foreignId('attribute_options_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_attribute_id')->constrained('product_attributes')->onDelete('cascade');
             $table->integer('quantity');
             $table->unique(['order_item_id', 'attribute_options_id']);
 

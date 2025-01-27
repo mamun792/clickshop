@@ -567,7 +567,7 @@ canAccess(['StockReport']) )
             </a>
         </li>
         @endif
-        {{--
+
                 @if(canAccess(['PurchaseReport']))
                 <li>
                     <a href="{{ route('admin.report.purchase.report') }}#report">
@@ -575,7 +575,7 @@ canAccess(['StockReport']) )
         Purchase Report
         </a>
 </li>
-@endif --}}
+@endif
 
 <!-- @if(canAccess(['StockReport']))
 <li>

@@ -4,6 +4,7 @@ namespace App\Services\Admin\Order;
 
 use App\Models\AttributeOption;
 use App\Models\Cart;
+use App\Models\CartAttribute;
 use App\Models\OrderItemOption;
 use App\Models\Payment;
 use App\Models\Product;
@@ -33,8 +34,6 @@ class OrderService implements OrderServiceInterface
 
     public function checkout(array $data)
     {
-        // Log::info('Checkout data:', $data);
-        // die();
 
         DB::beginTransaction();
         try {
@@ -50,13 +49,13 @@ class OrderService implements OrderServiceInterface
             $totalPrice = $this->calculateTotalPrice($items);
             $deliveryCharge = $this->getDeliveryCharge($data);
             $paidAmount = $data['paid_amount'] ?? 0;
-           //  $orderType = 'checkout'; //testing pos
-             $orderType = $data['order_type'] ?? 'pos';
-             $diccount = $data['discount'] ?? 0;
-             $posdiccount=$data['discounts'] ?? 0;
+            //  $orderType = 'checkout'; //testing pos
+            $orderType = $data['order_type'] ?? 'pos';
+            $diccount = $data['discount'] ?? 0;
+            $posdiccount = $data['discounts'] ?? 0;
 
 
-            $totalOrderAmount = $totalPrice + $deliveryCharge- $diccount-$posdiccount;
+            $totalOrderAmount = $totalPrice + $deliveryCharge - $diccount - $posdiccount;
 
 
 
@@ -157,10 +156,10 @@ class OrderService implements OrderServiceInterface
             if (!$user) {
                 // Create a new user if not found
                 $user = User::create([
-                    'id' => $userId, // Assuming 'id' can be provided
-                    'name' => $userName, // Provide a default name
-                    'email' => $userId . '@guest.com', // Generate a unique guest email
-                    'password' => bcrypt(Str::random(10)), // Generate a random password
+
+                    'name' => $userName,
+                    'email' => $userId . '@guest.com',
+                    'password' => bcrypt(Str::random(10)),
                 ]);
             }
             return $user;
@@ -201,14 +200,14 @@ class OrderService implements OrderServiceInterface
             'phone_number' => $phoneNumber,
             'email' => $user->email,
             'order_status' => $data['order_status'] ?? 'pending',
-            'total_price' => $totalPrice - ($data['discounts'] ?? 0)-($data['discount'] ?? 0),
+            'total_price' => $totalPrice - ($data['discounts'] ?? 0) - ($data['discount'] ?? 0),
             'shipping_price' => $data['shipping_price'] ?? 0,
             'delivery' => 'N/A',
             'delivery_charge' => $deliveryCharge,
             'order_type' => 'pos',
             'note' => $data['note'] ?? null,
             'invoice_number' => $invoiceNumber,
-             'remaining_balance' => $remainingBalance ?? null,
+            'remaining_balance' => $remainingBalance ?? null,
             'paid_amount' => $paidAmount ?? 0,
             'discount' => $posdiccount,
 
@@ -228,9 +227,13 @@ class OrderService implements OrderServiceInterface
             ? array_map('trim', $item['attributeOptionId'])
             : array_map('trim', explode(',', (string)$item['attributeOptionId']));
 
+
+
+
         // Calculate quantity per attribute option
         $requestQuantity = (int)$item['quantity'];
         $numberOfAttributes = count($attributeOptionIds);
+
         $totalRequestQuantity = $requestQuantity * $numberOfAttributes;
 
 
@@ -255,111 +258,134 @@ class OrderService implements OrderServiceInterface
                     ? [$item['attributeOptionId']]
                     : explode(',', $item['attributeOptionId']));
 
-            $this->processAttributes($orderItem, $attributeOptionIds, $item['quantity'], $totalRequestQuantity);
+            $this->processAttributes($orderItem, $attributeOptionIds, $item['quantity'], $totalRequestQuantity, $data);
         } else {
             // Reduce product quantity
             $product->decrement('quantity',  $totalRequestQuantity);
             $product->increment('sold_quantity',  $totalRequestQuantity);
-
         }
     }
 
 
 
-    
 
 
-    private function processAttributes($orderItem, $attributeOptionIds, $quantity, $totalRequestQuantity)
+
+    private function processAttributes($orderItem, $attributeOptionIds, $quantity, $totalRequestQuantity, $data)
     {
-        if (!is_array($attributeOptionIds) && !is_string($attributeOptionIds)) {
-            $errorMessage = "Invalid attribute option data. Expected array or string, got: " . gettype($attributeOptionIds);
-            // Log::error($errorMessage);
-            throw new \Exception($errorMessage);
-        }
-
-        // Normalize and sanitize attribute option IDs
-        $attributeOptionIds = is_string($attributeOptionIds) ? explode(',', $attributeOptionIds) : $attributeOptionIds;
-        $attributeOptionIds = array_map('trim', $attributeOptionIds);
-
-        if (!is_array($attributeOptionIds)) {
-            $errorMessage = "Attribute option IDs must be an array after processing.";
-            // Log::error($errorMessage);
-            throw new \Exception($errorMessage);
-        }
-
-
-
-        $product = Product::findOrFail($orderItem->product_id);
-
-        // Fetch all attributes for the product
-        $productAttributes = ProductAttribute::whereIn('id', $attributeOptionIds)
-            ->where('status', 'enable')
-            ->get();
-
-        $attributesByCombination = $productAttributes->groupBy('combination_id');
-        $singleAttributes = $attributesByCombination->get(null, collect());
-        $combinations = $attributesByCombination->except(null);
-
-        // Check for single attribute
-        if ($singleAttributes->isNotEmpty() && count($attributeOptionIds) === 1) {
-            $singleAttribute = $singleAttributes->firstWhere('id', $attributeOptionIds[0]);
-
-            if ($singleAttribute && $singleAttribute->quantity >= $quantity) {
-                $this->orderRepository->createOrderItemOption($orderItem->id, [
-                    'attribute_options_id' => $attributeOptionIds[0],
-                    'quantity' => $quantity,
-                ]);
-
-                $singleAttribute->decrement('quantity', $quantity);
-                $singleAttribute->increment('sold_quantity', $quantity);
-
-                // Reduce main product quantity
-
-
-
-
-                return true;
+        try {
+            // Validate and normalize attribute option IDs
+            if (!is_array($attributeOptionIds) && !is_string($attributeOptionIds)) {
+                throw new \Exception("Invalid attribute option data. Expected array or string, got: " . gettype($attributeOptionIds));
             }
 
-            throw new \Exception("Insufficient stock for single attribute option ID: {$attributeOptionIds[0]}");
-        }
+            $attributeOptionIds = is_string($attributeOptionIds) ? explode(',', $attributeOptionIds) : $attributeOptionIds;
+            $attributeOptionIds = array_map('trim', $attributeOptionIds);
 
-        // Check for combinations
-        foreach ($combinations as $combinationId => $attributes) {
-            $combinationOptionIds = $attributes->pluck('id')->toArray();
+            if (!is_array($attributeOptionIds)) {
+                throw new \Exception("Attribute option IDs must be an array after processing.");
+            }
 
-            if (array_diff($attributeOptionIds, $combinationOptionIds) === []) {
-                $hasSufficientQuantity = $attributes->every(fn($attr) => $attr->quantity >= $quantity);
+            $product = Product::findOrFail($orderItem->product_id);
 
-                if ($hasSufficientQuantity) {
-                    foreach ($attributes as $attribute) {
-                        $this->orderRepository->createOrderItemOption($orderItem->id, [
-                            'attribute_options_id' => $attribute->attribute_option_id,
-                            'quantity' => $quantity,
-                        ]);
+            // Fetch all attributes related to the product
+            $productAttributes = ProductAttribute::whereIn('id', $attributeOptionIds)
+                ->where('status', 'enable')
+                ->get();
 
-                        $attribute->decrement('quantity', $quantity);
-                        $attribute->increment('sold_quantity', $quantity);
+            $attributesByCombination = $productAttributes->groupBy('combination_id');
+            $singleAttributes = $attributesByCombination->get(null, collect());
+            $combinations = $attributesByCombination->except(null);
+
+
+
+            // Process single attributes
+            if ($singleAttributes->isNotEmpty() && count($attributeOptionIds) === 1) {
+                $singleAttribute = $singleAttributes->firstWhere('id', $attributeOptionIds[0]);
+
+                if ($singleAttribute && $singleAttribute->quantity >= $quantity) {
+                    // Get attribute_options_id from the mapped data
+                    $attributeOptionsId = $optionsByCartId[$orderItem->cart_id] ?? $singleAttribute->attribute_option_id;
+
+                    if (!$attributeOptionsId) {
+                        throw new \Exception("Could not determine attribute_options_id for cart_id: {$orderItem->cart_id}");
                     }
 
-                    // Reduce main product quantity
-                    $product->decrement('quantity',  $totalRequestQuantity);
-                    $product->increment('sold_quantity',  $totalRequestQuantity);
+                    $orderItemOptionData = [
+                        'product_attibute_id' => $attributeOptionIds[0],
+                        'attribute_options_id' => $attributeOptionsId,
+                        'quantity' => $quantity,
+                    ];
 
-                    // Log::info('Main product stock updated after combination attribute processing', [
-                    //     'productId' => $product->id,
-                    //     'decrementedBy' => $quantity,
-                    // ]);
+
+
+                    $this->orderRepository->createOrderItemOption($orderItem->id, $orderItemOptionData);
+
+                    $singleAttribute->decrement('quantity', $quantity);
+                    $singleAttribute->increment('sold_quantity', $quantity);
+
+                    $product->decrement('quantity', $totalRequestQuantity);
+                    $product->increment('sold_quantity', $totalRequestQuantity);
 
                     return true;
                 }
 
-                throw new \Exception("Insufficient stock for one or more attributes in combination ID: {$combinationId}");
+                throw new \Exception("Insufficient stock for single attribute option ID: {$attributeOptionIds[0]}");
             }
-        }
 
-        throw new \Exception("No matching attributes or combinations found for the provided options.");
+            // Process combinations
+            foreach ($combinations as $combinationId => $attributes) {
+                $combinationOptionIds = $attributes->pluck('id')->toArray();
+
+                if (array_diff($attributeOptionIds, $combinationOptionIds) === []) {
+                    $hasSufficientQuantity = $attributes->every(fn($attr) => $attr->quantity >= $quantity);
+
+                    if ($hasSufficientQuantity) {
+                        foreach ($attributes as $attribute) {
+                            // Get attribute_options_id from the mapped data or fallback to attribute's option id
+                            $attributeOptionsId = $optionsByCartId[$orderItem->cart_id] ?? $attribute->attribute_option_id;
+
+                            if (!$attributeOptionsId) {
+                                throw new \Exception("Could not determine attribute_options_id for combination attribute");
+                            }
+
+                            $orderItemOptionData = [
+                                'product_attibute_id' => $attributeOptionIds[0],
+                                'attribute_options_id' => $attributeOptionsId,
+                                'quantity' => $quantity,
+                            ];
+
+                            Log::info('Creating combination order item option:', $orderItemOptionData);
+
+                            $this->orderRepository->createOrderItemOption($orderItem->id, $orderItemOptionData);
+
+                            $attribute->decrement('quantity', $quantity);
+                            $attribute->increment('sold_quantity', $quantity);
+                        }
+
+                        $product->decrement('quantity', $totalRequestQuantity);
+                        $product->increment('sold_quantity', $totalRequestQuantity);
+
+                        return true;
+                    }
+
+                    throw new \Exception("Insufficient stock for one or more attributes in combination ID: {$combinationId}");
+                }
+            }
+
+            throw new \Exception("No matching attributes or combinations found for the provided options.");
+        } catch (\Exception $e) {
+            Log::error('Error in processAttributes:', [
+                'message' => $e->getMessage(),
+                'orderItem' => $orderItem->toArray(),
+                'attributeOptionIds' => $attributeOptionIds,
+                'data' => $data
+            ]);
+            throw $e;
+        }
     }
+
+
 
 
 

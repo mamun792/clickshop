@@ -6,7 +6,7 @@
 
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Purchase Report</h5>
+                <h5 class="card-title mb-0">Offline Report</h5>
 
             </div>
             <div class="card-body">
@@ -57,21 +57,7 @@
                         </div>
 
                         <!-- Order Status -->
-                        <div class="col-md-2">
-                            <label for="order_status" class="form-label">Order Status:</label>
-                            <select
-                                class="form-select"
-                                id="order_status"
-                                name="order_status"
-                                aria-label="Filter by order status"
-                            >
-                                <option value="">Select</option>
-                                <option value="pending" {{ request('order_status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="processing" {{ request('order_status') === 'processing' ? 'selected' : '' }}>Processing</option>
-                                <option value="completed" {{ request('order_status') === 'completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="cancelled" {{ request('order_status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
-                        </div>
+
 
                         <!-- Buttons -->
                         <div class="col-md-4 d-flex align-items-center justify-content-end">

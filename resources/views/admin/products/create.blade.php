@@ -236,7 +236,7 @@
 
                             <hr />
 
-                            <div class="row" id="purchaseDetails" style="display: none;">
+                            <div class="row" id="purchaseDetails" >
 
 
 
