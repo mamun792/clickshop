@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Admin\Account\AccountTypeRepository;
+use App\Repositories\Admin\Account\AccountTypeRepositoryInterface;
 use App\Repositories\Admin\Brands\BrandsRepository;
 use App\Repositories\Admin\Brands\BrandsRepositoryInterface;
 use App\Repositories\Admin\Campaign\CampaignRepository;
@@ -68,6 +70,8 @@ use App\Repositories\Admin\Purchase\PurchaseRepository;
 use App\Repositories\Admin\Purchase\PurchaseRepositoryInterface;
 use App\Repositories\Admin\Role\RoleRepository;
 use App\Repositories\Admin\UserRole\UserRepository;
+use App\Services\Admin\Account\AccountTypeService;
+use App\Services\Admin\Account\AccountTypeServiceInterface;
 use App\Services\Admin\CourierConfigService\CourierConfigService;
 use App\Services\Admin\Product\ProductService;
 use App\Services\Admin\Purchase\PurchaseService;
@@ -181,7 +185,10 @@ class AppServiceProvider extends ServiceProvider
           //PurchaseRepository
           $this->app->bind(PurchaseRepositoryInterface::class, PurchaseRepository::class);
           $this->app->bind(PurchaseServiceInterface::class, PurchaseService::class);
-          
+
+          // AccountTypeRepositoryInterface
+            $this->app->bind(AccountTypeRepositoryInterface::class, AccountTypeRepository::class);
+            $this->app->bind(AccountTypeServiceInterface::class, AccountTypeService::class);
 
 
         // avater

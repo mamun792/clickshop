@@ -3,16 +3,7 @@
 use App\Http\Controllers\Admin\AccessManagement\RollPermissionController;
 use App\Http\Controllers\Admin\AccessManagement\RollUserController;
 use App\Http\Controllers\Admin\Api\APIController;
-// use App\Http\Controllers\Admin\Api\APIController;
-// use App\Http\Controllers\Admin\Attributes\AttributesController;
-// use App\Http\Controllers\Admin\Blog\BlogController;
-// use App\Http\Controllers\Admin\BlogCategory\BlogCategoryController;
-// use App\Http\Controllers\Admin\Brand\BrandController;
-// use App\Http\Controllers\Admin\Brands\BrandsController;
-// use App\Http\Controllers\Admin\Cart\CartController;
-// use App\Http\Controllers\Admin\Categoryies\CategoriyesController;
-// use App\Http\Controllers\Admin\Comment\CommentController;
-// use App\Http\Controllers\Admin\Coupon\CouponController;
+
  use App\Http\Controllers\Admin\CustomRegister\CustomRegisterController;
 // use App\Http\Controllers\Admin\Dashboard\DashboardController;
  use App\Http\Controllers\Admin\Orders\ManageOrdersController;
@@ -24,24 +15,6 @@ use App\Http\Controllers\NotificationController;
 
 
 
-// use App\Http\Controllers\Admin\Sliders\SliderController;
-// use App\Http\Controllers\Admin\SubCategories\SubCategoriesController;
-// use App\Http\Controllers\Admin\Supplier\SuppliersController;
-
-
-// use App\Http\Controllers\Admin\Inventory\InventoryController;
-// use App\Http\Controllers\Admin\Manage\ManageController;
-// use App\Http\Controllers\Admin\MarketingTool\MarketingToolController;
-// use App\Http\Controllers\Admin\Media\MediaController;
-// use App\Http\Controllers\Admin\Order\OrderController;
-// use App\Http\Controllers\Admin\Pages\PagesController;
-// use App\Http\Controllers\Admin\Pos\POSController;
-// use App\Http\Controllers\Admin\Product\ProductController;
-// use App\Http\Controllers\Admin\Profile\ProfileController;
-// use App\Http\Controllers\Admin\Promotion\PromotionController;
-// use App\Http\Controllers\Admin\Purchase\PurchaseController;
-// use App\Http\Controllers\Admin\Report\ReportController;
-// use App\Models\SubCategory;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -168,7 +141,8 @@ require __DIR__ . '/admin/marketing.php';
 
 require __DIR__ . '/auth.php';
 
-
+// AccountController
+require __DIR__ . '/admin/account.php';
 
 
 

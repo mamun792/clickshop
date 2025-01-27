@@ -421,7 +421,7 @@
          --}}
 
         @if(canAccess(['AccountType']))
-        <li> <a href="#">
+        <li> <a href="{{ route('admin.account.add-account-type') }}">
                 <i class='bx bx-radio-circle'></i>
                 Account Type
             </a>
@@ -458,7 +458,7 @@
 
         {{--  Account Purpose --}}
         @if(canAccess(['AccountPurpose']))
-        <li> <a href="#">
+        <li> <a href="{{ route('admin.account.accountPurpose') }}">
                 <i class='bx bx-radio-circle'></i>
                 Account Purpose
             </a>
