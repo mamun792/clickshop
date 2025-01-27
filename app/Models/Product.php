@@ -24,7 +24,7 @@ class Product extends Model
 
         // Invalidate cache when a product is created, updated, or deleted
         static::created(function () {
-            Cache::forget('stock_report_page_1'); 
+            Cache::forget('stock_report_page_1');
         });
 
         static::updated(function () {
@@ -154,4 +154,9 @@ class Product extends Model
         return $this->hasMany(ProductAttributeCombination::class);
     }
 
+
+    public function purchase()
+    {
+        return $this->belongsTo(Purchase::class);
+    }
 }

@@ -22,7 +22,11 @@ class Purchase extends Model
         return $this->hasMany(PurchaseGroup::class, 'purchase_id', 'id');
     }
 
-   
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 
-    
+
+
 }

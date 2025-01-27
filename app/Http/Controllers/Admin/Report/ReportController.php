@@ -40,7 +40,9 @@ class ReportController extends Controller
 
     public function purchaseReport(Request $request)
     {
-        $purchaseReports = $this->reportRepository->getPurchaseReport($request);
+       $purchaseReports = $this->reportRepository->getPurchaseReport($request);
+     $purchaseReports->load('supplier', 'products');
+
         return view('admin.report.purchase-report', compact('purchaseReports'));
     }
 

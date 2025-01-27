@@ -6,7 +6,7 @@ use App\Helpers\CacheHelper;
 use App\Models\Order;
 
 use App\Models\Product;
-
+use App\Models\Purchase;
 use App\Models\PurchaseGroup;
 use App\Models\SiteInfo;
 
@@ -45,8 +45,18 @@ class ReportRepository implements ReportRepositoryInterface
 
     public function getPurchaseReport(Request $request): LengthAwarePaginator
     {
-        $query = PurchaseGroup::with('purchase.supplier')
-            ->orderBy('created_at', 'desc');
+        // $query = Product::where('stock_option', 'From Purchase')
+        //     ->with(['productAttributes.attribute', 'productAttributes.attributeOption'])
+        //     ->orderBy('created_at', 'desc');
+
+
+        $query =  Purchase::with([
+            'supplier',
+            'products'
+        ])
+        ->orderBy('created_at', 'desc');
+
+
 
 
 
