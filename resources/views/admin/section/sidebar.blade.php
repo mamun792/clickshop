@@ -391,6 +391,86 @@
 @endif
 
 
+@if(canAccess(['AccountManagement']) || canAccess(['AccountList']))
+
+<li>
+    <a href="javascript:;" class="has-arrow">
+        <div class="parent-icon"><img src="{{ asset('uploads/key.png') }}" style="width: 30px; height: 30px" />
+        </div>
+        <div class="menu-title">Account </div>
+    </a>
+    <ul>
+        @if(canAccess(['AccountManagement']))
+        <li> <a href="#">
+                <i class='bx bx-radio-circle'></i>
+                Income
+            </a>
+        </li>
+        @endif
+
+
+        @if(canAccess(['AccountList']))
+        <li> <a href="#">
+                <i class='bx bx-radio-circle'></i>
+                Expense
+            </a>
+        </li>
+        @endif
+
+        {{-- Add Account Type
+         --}}
+
+        @if(canAccess(['AccountType']))
+        <li> <a href="#">
+                <i class='bx bx-radio-circle'></i>
+                Account Type
+            </a>
+        </li>
+        @endif
+
+
+        {{-- Report Balance --}}
+        @if(canAccess(['ReportBalance']))
+        <li> <a href="#">
+                <i class='bx bx-radio-circle'></i>
+                Report Balance
+            </a>
+        </li>
+        @endif
+        {{-- Balance --}}
+
+        @if(canAccess(['Balance']))
+        <li> <a href="#">
+                <i class='bx bx-radio-circle'></i>
+                Balance
+            </a>
+        </li>
+        @endif
+
+        {{-- Fund Transfer --}}
+        @if(canAccess(['FundTransfer']))
+        <li> <a href="#">
+                <i class='bx bx-radio-circle'></i>
+                Fund Transfer
+            </a>
+        </li>
+        @endif
+
+        {{--  Account Purpose --}}
+        @if(canAccess(['AccountPurpose']))
+        <li> <a href="#">
+                <i class='bx bx-radio-circle'></i>
+                Account Purpose
+            </a>
+        </li>
+        @endif
+    </ul>
+</li>
+@endif
+
+
+
+
 @if(canAccess(['Brands']))
 
 <li>

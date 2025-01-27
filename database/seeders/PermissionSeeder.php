@@ -13,7 +13,7 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        
+
         $permissions = array(
 
             array(
@@ -186,7 +186,7 @@ class PermissionSeeder extends Seeder
             ),
 
 
-            
+
             array(
                 "id" => 19,
                 "name" => "AddCampaign",
@@ -433,7 +433,62 @@ class PermissionSeeder extends Seeder
             ),
 
 
-
+            [
+                'id' => 46,
+                'name' => 'AccountManagement',
+                'guard_name' => 'web',
+                'group' => 'Account Management',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 47,
+                'name' => 'AccountList',
+                'guard_name' => 'web',
+                'group' => 'Account Management',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 48,
+                'name' => 'AccountType',
+                'guard_name' => 'web',
+                'group' => 'Account Management',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 49,
+                'name' => 'ReportBalance',
+                'guard_name' => 'web',
+                'group' => 'Account Management',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 50,
+                'name' => 'Balance',
+                'guard_name' => 'web',
+                'group' => 'Account Management',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 51,
+                'name' => 'FundTransfer',
+                'guard_name' => 'web',
+                'group' => 'Account Management',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 52,
+                'name' => 'AccountPurpose',
+                'guard_name' => 'web',
+                'group' => 'Account Management',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
 
 
 
