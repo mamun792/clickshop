@@ -36,5 +36,26 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
         Route::delete('/accountPurpose/{purpose}', [AccountController::class, 'destroyPurpose'])->name('destroyPurpose');
 
+        // income
+        Route::get('/income', [AccountController::class, 'income'])->name('income');
+        // credit
+        Route::get('/credit', [AccountController::class, 'credit'])->name('add-credit');
+        // store-debit
+        Route::post('/debit', [AccountController::class, 'storeDebit'])->name('store-debit');
+
+        // debit
+        Route::get('/debit', [AccountController::class, 'debit'])->name('add-debit');
+        // store-credit
+        Route::post('/credit', [AccountController::class, 'storeCredit'])->name('store-credit');
+
+        // Balance Transfer
+        Route::get('/balance-transfer', [AccountController::class, 'balanceTransfer'])->name('balance-transfer');
+
+        // form for balance transfer
+        Route::get('/balance-transfer-form', [AccountController::class, 'balanceTransferForm'])->name('balance-transfer-form');
+        // store-balance-transfer
+        Route::post('/balance-transfer', [AccountController::class, 'storeBalanceTransfer'])->name('store-balance-transfer');
+
+
     });
 });

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Repositories\Admin\Account;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface AccountTypeRepositoryInterface
 {
@@ -16,4 +17,9 @@ interface AccountTypeRepositoryInterface
     public function deletePurpose($id);
     public function getAllPurposes();
     public function getPurpose($id);
+
+    public function  getAllTransactions(array $data);
+    public function storeDebit(array $data);
+    public function getAllCredits(array $filters): LengthAwarePaginator;
+    public function getAlldebits(array $filters): LengthAwarePaginator;
 }

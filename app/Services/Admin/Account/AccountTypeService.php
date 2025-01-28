@@ -3,6 +3,7 @@
 namespace App\Services\Admin\Account;
 
 use App\Repositories\Admin\Account\AccountTypeRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AccountTypeService implements AccountTypeServiceInterface
 {
@@ -65,5 +66,25 @@ class AccountTypeService implements AccountTypeServiceInterface
         return $this->accountTypeRepository->getPurpose($id);
     }
 
+    public function storeDebit(array $data)
+    {
+        return $this->accountTypeRepository->storeDebit($data);
+    }
 
+    public function getAllCredits(array $filters): LengthAwarePaginator
+    {
+        return $this->accountTypeRepository->getAllCredits($filters);
+    }
+
+    public function getAlldebits(array $filters): LengthAwarePaginator
+    {
+        return $this->accountTypeRepository->getAlldebits($filters);
+    }
+
+
+    public function getAllTransactions(array $filters): LengthAwarePaginator
+    {
+        return $this->accountTypeRepository->getAllTransactions($filters);
+    }
+   
 }

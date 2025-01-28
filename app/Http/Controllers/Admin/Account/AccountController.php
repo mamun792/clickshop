@@ -109,4 +109,78 @@ class AccountController extends Controller
 
         return back()->with('success', 'Account purpose deleted successfully!');
     }
+
+    //income
+    public function income(Request $request)
+    {
+
+        $filters = $request->only(['startDate', 'endDate', 'account_type']);
+
+
+        $allTransactions = $this->accountTypeService->getAllTransactions($filters);
+
+
+        $credits = $this->accountTypeService->getAllCredits($filters);
+        $debits = $this->accountTypeService->getAllDebits($filters);
+
+
+        $accountTypes = $this->accountTypeService->getAllAccountTypes();
+
+        // Calculate income (sum of credits), expenses (sum of debits), and balance (income - expense)
+        $income = $credits->sum('amount');
+        $expense = $debits->sum('amount');
+        $balance = $income - $expense;
+
+
+        $accountType = $accountTypes->count();
+        return view('admin.account.income', compact('credits','debits','accountTypes','income','expense','balance','accountType'));
+    }
+
+    //credit
+    public function credit()
+    {
+        $accountTypes = $this->accountTypeService->getAllAccountTypes();
+        $purposes = $this->accountTypeService->getAllPurposes();
+        return view('admin.account.credit', compact('accountTypes', 'purposes'));
+    }
+
+    //debit
+    public function debit()
+    {
+        $accountTypes = $this->accountTypeService->getAllAccountTypes();
+        $purposes = $this->accountTypeService->getAllPurposes();
+        return view('admin.account.debit', compact('accountTypes', 'purposes'));
+    }
+
+    public function storeDebit(Request $request)
+    {
+        // return $request->all();
+        $data = $request->validate([
+            '_token' => 'required|string',
+            'transaction_date' => 'required|date',
+            'purpose_id' => 'required|exists:purposes,id',
+            'amount' => 'required|numeric|min:0',
+            'comments' => 'nullable|string|max:255',
+            'account_id' => 'required|exists:account_types,id',
+            'transaction_type' => 'required|in:credit,debit',
+            'document' => 'nullable|file|mimes:jpeg,png,pdf',
+        ]);
+
+
+        $this->accountTypeService->storeDebit($data);
+
+        return back()->with('success', 'Debit added successfully!');
+    }
+
+    public function balanceTransfer()
+    {
+        $accountTypes = $this->accountTypeService->getAllAccountTypes();
+        return view('admin.account.balanceTransfer', compact('accountTypes'));
+    }
+
+    public function balanceTransferForm()
+    {
+        $accountTypes = $this->accountTypeService->getAllAccountTypes();
+        return view('admin.account.balanceTransferForm', compact('accountTypes'));
+    }
 }

@@ -51,7 +51,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <!-- Froala Editor Stylesheet -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css" />
 
@@ -306,7 +306,7 @@ td.last2 {
 
 
 
- 
+
 
     <script>
         $(document).ready(function() {
@@ -385,7 +385,7 @@ td.last2 {
 
 
 
-
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <!-- Tagify JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.min.js"></script>
@@ -459,14 +459,14 @@ td.last2 {
 
     @stack('scripts');
     <script>
-        //check dark mode or light in the local storage and add into the html 
+        //check dark mode or light in the local storage and add into the html
         if (localStorage.getItem('theme') == 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
         } else {
             document.documentElement.setAttribute('data-theme', 'light');
         }
-        
-        
+
+
     </script>
 
 </body>

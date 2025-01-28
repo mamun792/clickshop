@@ -401,7 +401,7 @@
     </a>
     <ul>
         @if(canAccess(['AccountManagement']))
-        <li> <a href="#">
+        <li> <a href="{{route('admin.account.income')}}">
                 <i class='bx bx-radio-circle'></i>
                 Income
             </a>
@@ -449,7 +449,7 @@
 
         {{-- Fund Transfer --}}
         @if(canAccess(['FundTransfer']))
-        <li> <a href="#">
+        <li> <a href="{{route('admin.account.balance-transfer')}}">
                 <i class='bx bx-radio-circle'></i>
                 Fund Transfer
             </a>
