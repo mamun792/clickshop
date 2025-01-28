@@ -33,45 +33,34 @@
                                 <th scope="col">From</th>
                                 <th scope="col">To</th>
                                 <th scope="col">Amount</th>
-                                <th scope="col">Cost(%)</th>
+                                <th scope="col">Cost</th>
                                 <th scope="col">Comment</th>
-                                <th scope="col">Create By</th>
+                                <th scope="col">Created By</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                                <td>Mark</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                                <td>Mark</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>Larry the Bird</td>
-                                <td>@twitter</td>
-                                <td>@mdo</td>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                                <td>Mark</td>
-                            </tr>
+                            @foreach($transfer as $key => $item)
+                                <tr>
+                                    <td>{{ $transfer->firstItem() + $key }}</td>
+                                    <td>{{ $item->transfer_date }}</td>
+                                    <td>{{ $item->from_balance }}</td>
+                                    <td>{{ $item->to_balance }}</td>
+
+                                    <td>{{ number_format($item->transfer_amount, 2) }}</td>
+                                    <td>{{ number_format($item->cost, 2) }}</td>
+                                    <td>{{ $item->comments ?? 'N/A' }}</td>
+                                    <td>{{ $item->user->name }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
-                </div>
+
+                    <!-- Pagination Links -->
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $transfer->links() }}
+                    </div>
+
+
             </div>
         </div>
     </div>

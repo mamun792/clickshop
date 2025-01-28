@@ -86,5 +86,15 @@ class AccountTypeService implements AccountTypeServiceInterface
     {
         return $this->accountTypeRepository->getAllTransactions($filters);
     }
-   
+
+    public function storeBalanceTransfer(array $data)
+    {
+        return $this->accountTypeRepository->storeBalanceTransfer($data);
+    }
+
+    public function getAllTransfers(array $filters): LengthAwarePaginator
+    {
+        return $this->accountTypeRepository->getAllTransfers($filters);
+    }
+
 }

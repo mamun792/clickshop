@@ -409,13 +409,7 @@
         @endif
 
 
-        @if(canAccess(['AccountList']))
-        <li> <a href="#">
-                <i class='bx bx-radio-circle'></i>
-                Expense
-            </a>
-        </li>
-        @endif
+       
 
         {{-- Add Account Type
          --}}

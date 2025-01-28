@@ -5,7 +5,10 @@ namespace App\Repositories\Admin\Account;
 use App\Models\AccountType;
 use App\Models\Purpose;
 use App\Models\Transaction;
+use App\Models\Transfer;
 use App\Traits\FileUploadTrait;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class AccountTypeRepository implements AccountTypeRepositoryInterface
@@ -135,6 +138,65 @@ class AccountTypeRepository implements AccountTypeRepositoryInterface
 
         return $query->paginate(10);
     }
-    
+
+    public function storeBalanceTransfer(array $data)
+    {
+       // Retrieve the accounts
+        $fromAccount =  Transaction::where('account_id', $data['from_balance'])->latest()->first();
+        $toAccount = Transaction::where('account_id', $data['to_balance'])->latest()->first();
+
+
+         // Check for sufficient balance in the from account
+    if ($fromAccount->amount < $data['transfer_amount']) {
+
+       throw new \Exception('Insufficient balance in the source account.');
+    }
+
+    // Update the balance in the from account DB::beginTransaction();
+    try {
+        // Update the account balances
+        $fromAccount->amount-= $data['transfer_amount'];
+        $toAccount->amount += $data['transfer_amount'];
+
+        // Save the changes
+        $fromAccount->save();
+        $toAccount->save();
+
+
+        // Record the tranfer   for the to account (credit)
+     $creayte=   Transfer::create([
+            'from_account_id' => $data['from_balance'],
+            'to_account_id' => $data['to_balance'],
+            'transfer_date' => $data['transaction_date'],
+            'transfer_amount' => $data['transfer_amount'],
+            'transaction_type' => 'credit',
+            'comments' => $data['comments'] ?? '',
+            'user_id' => auth()->id(),
+            'cost' => $data['cost'] ?? 0,
+
+        ]);
+
+
+
+        // Commit the transaction
+        DB::commit();
+    } catch (\Exception $e) {
+        // Rollback the transaction
+        DB::rollBack();
+      //  Log::error($e->getMessage());
+        return $e->getMessage();
+    }
+    }
+
+    public function getAllTransfers(array $filters): LengthAwarePaginator
+    {
+         $query = Transfer::with(['fromAccount', 'toAccount','user'])->latest();
+
+        if (isset($filters['startDate']) && isset($filters['endDate'])) {
+            $query->whereBetween('transfer_date', [$filters['startDate'], $filters['endDate']]);
+        }
+
+        return $query->paginate(10);
+    }
 
 }

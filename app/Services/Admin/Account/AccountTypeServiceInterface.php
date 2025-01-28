@@ -25,6 +25,9 @@ interface AccountTypeServiceInterface
     public function getAllCredits(array $filters): LengthAwarePaginator;
 
     public function getAlldebits(array  $filters): LengthAwarePaginator;
+     public function storeBalanceTransfer(array $data);
+   public function getAllTransfers(array $filters): LengthAwarePaginator;
+
 
 
 }

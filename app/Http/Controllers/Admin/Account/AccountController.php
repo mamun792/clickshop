@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin\Account;
 use App\Http\Controllers\Controller;
 use App\Models\Purpose;
 use App\Services\Admin\Account\AccountTypeServiceInterface;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+
 
 class AccountController extends Controller
 {
@@ -64,7 +67,7 @@ class AccountController extends Controller
     public function accountPurpose()
     {
 
-         $purposes=$this->accountTypeService->getAllPurposes();
+        $purposes = $this->accountTypeService->getAllPurposes();
         return view('admin.account.accountPurpose', compact('purposes'));
     }
 
@@ -133,7 +136,7 @@ class AccountController extends Controller
 
 
         $accountType = $accountTypes->count();
-        return view('admin.account.income', compact('credits','debits','accountTypes','income','expense','balance','accountType'));
+        return view('admin.account.income', compact('credits', 'debits', 'accountTypes', 'income', 'expense', 'balance', 'accountType'));
     }
 
     //credit
@@ -172,15 +175,56 @@ class AccountController extends Controller
         return back()->with('success', 'Debit added successfully!');
     }
 
-    public function balanceTransfer()
+    public function balanceTransfer(Request $request)
     {
-        $accountTypes = $this->accountTypeService->getAllAccountTypes();
-        return view('admin.account.balanceTransfer', compact('accountTypes'));
+
+        $transfer = $this->accountTypeService->getAllTransfers($request->all());
+
+        // Flatten the data to include account names directly
+        $transfers = $transfer->getCollection()->map(function ($item) {
+            $item->from_balance = $item->fromAccount->name;
+            $item->to_balance = $item->toAccount->name;
+            return $item;
+        });
+
+        // Set the modified collection back to the paginator
+      $transfer->setCollection($transfers);
+
+        return view('admin.account.balanceTransfer', compact('transfer'));
     }
 
     public function balanceTransferForm()
     {
-        $accountTypes = $this->accountTypeService->getAllAccountTypes();
-        return view('admin.account.balanceTransferForm', compact('accountTypes'));
+        $accounts = $this->accountTypeService->getAllAccountTypes();
+        return view('admin.account.balanceTransferForm', compact('accounts'));
+    }
+
+
+
+    public function storeBalanceTransfer(Request $request)
+    {
+        // Log::info($request->all());
+        $data = $request->validate([
+
+            'from_balance' => 'required',
+            'to_balance' => 'required',
+            'amount' => 'required|numeric|min:0',
+            'comments' => 'nullable|string|max:255',
+
+            'transfer_amount' => 'nullable|string|max:255',
+            'cost' => 'nullable|numeric|min:0',
+        ]);
+        if (!isset($data['transaction_date'])) {
+            $data['transaction_date'] = Carbon::now()->toDateString();
+        }
+
+
+
+
+
+        $pp =   $this->accountTypeService->storeBalanceTransfer($data);
+
+
+        return response()->json(['success' => 'Balance transfer successful!']);
     }
 }
