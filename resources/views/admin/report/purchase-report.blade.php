@@ -106,14 +106,15 @@
                             <td>
                                 @php
                                     $purchaseTotalQuantity = $purchaseReport->products->sum('quantity');
-                                    $totalQuantity += $purchaseTotalQuantity;
+                                    $soldTotalQuantity = $purchaseReport->products->sum('sold_quantity');
+                                    $totalQuantity += $purchaseTotalQuantity + $soldTotalQuantity;
                                 @endphp
-                                {{ $purchaseTotalQuantity }}
+                                {{ $purchaseTotalQuantity+$soldTotalQuantity }}
                             </td>
                             <td>
                                 @php
                                     $purchaseTotalAmount = $purchaseReport->products->sum(function($product) {
-                                        return $product->price * $product->quantity;
+                                        return $product->price * ( $product->quantity + $product->sold_quantity );
                                     });
                                     $totalAmount += $purchaseTotalAmount;
                                 @endphp

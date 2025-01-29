@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Route::group( ['middleware' => ['auth', 'verified'], 'prefix' => 'admin'], function () {
+
 
 Route::group(['middleware' => ['auth', 'verified'], 'prefix' => 'admin'], function () {
   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('permission:Dashboard');
@@ -106,4 +106,9 @@ Route::group(['middleware' => ['auth', 'verified'], 'prefix' => 'admin'], functi
     Route::post('/api-token', [APIController::class, 'generateApiToken'])->name('generateApiToken');
 
   Route::get('/payment-api', [APIController::class, 'paymentApi'])->name('paymentApi');
+
+  // analytics dashboard
+  Route::get('/analytics', [DashboardController::class, 'analytics'])
+  ->name('admin.analytics')
+  ->middleware('permission:AnalyticsDashboard');
 });

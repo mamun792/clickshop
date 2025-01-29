@@ -72,6 +72,7 @@ use App\Repositories\Admin\Role\RoleRepository;
 use App\Repositories\Admin\UserRole\UserRepository;
 use App\Services\Admin\Account\AccountTypeService;
 use App\Services\Admin\Account\AccountTypeServiceInterface;
+use App\Services\Admin\Analytics\AnalyticsService;
 use App\Services\Admin\CourierConfigService\CourierConfigService;
 use App\Services\Admin\Product\ProductService;
 use App\Services\Admin\Purchase\PurchaseService;
@@ -190,6 +191,8 @@ class AppServiceProvider extends ServiceProvider
             $this->app->bind(AccountTypeRepositoryInterface::class, AccountTypeRepository::class);
             $this->app->bind(AccountTypeServiceInterface::class, AccountTypeService::class);
 
+            // AnalyticsService
+            $this->app->bind(AnalyticsService::class);
 
         // avater
         $this->app->singleton(AvatarService::class, function ($app) {

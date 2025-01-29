@@ -472,6 +472,32 @@
 @endif
 
 
+{{-- //Analytics Dashboard --}}
+
+@if(canAccess(['AnalyticsDashboard']))
+<li>
+    <a href="javascript:;" class="has-arrow">
+        <div class="parent-icon"><img src="{{ asset('uploads/key.png') }}" style="width: 30px; height: 30px" />
+        </div>
+        <div class="menu-title">Analytics </div>
+    </a>
+
+    <ul>
+        @if(canAccess(['AnalyticsDashboard']))
+        <li> <a href="{{ route('admin.analytics') }}">
+                <i class='bx bx-radio-circle'></i>
+                 Dashboard
+            </a>
+        </li>
+        @endif
+
+    </ul>
+
+</li>
+@endif
+
+
+
 
 
 @if(canAccess(['Brands']))
