@@ -4,7 +4,14 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
+ <style>
+    #incomeDistributions {
+    max-width: 100% !important;
+    width: auto !important;
+    height: 300px !important;
+    margin: 0 auto;
+}
+ </style>
 
     <div class="page-content">
         <div class="container mx-auto p-6">
@@ -107,7 +114,7 @@
                 <!-- Income Distribution Chart -->
                 <div class="bg-white dark:bg-gray-800  shadow-sm p-4">
                     <h3 class="text-md font-medium text-gray-800 dark:text-white mb-1">Income Distribution</h3>
-                    <canvas id="incomeDistributions" height="50"></canvas>
+                    <canvas id="incomeDistributions" height="80"></canvas>
                 </div>
             </div>
 
@@ -215,6 +222,15 @@
             },
             options: { /* keep existing options */ }
         });
+
+        // custoim height for chart
+
+     const income=   document.getElementById('incomeDistributions').height = 20;
+            // custoim height for chart
+            income.height=0;
+
+
+
 
         // Populate Recent Transactions
         const transactionTable = document.getElementById('transactionTable');
