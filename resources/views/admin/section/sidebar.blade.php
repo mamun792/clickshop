@@ -401,6 +401,15 @@
     </a>
     <ul>
         @if(canAccess(['AccountManagement']))
+        <li> <a href="{{ route('admin.account.dashboard') }}">
+                <i class='bx bx-radio-circle'></i>
+                Account Dashboard
+            </a>
+        </li>
+        @endif
+
+
+        @if(canAccess(['AccountManagement']))
         <li> <a href="{{route('admin.account.income')}}">
                 <i class='bx bx-radio-circle'></i>
                 Income
@@ -409,7 +418,7 @@
         @endif
 
 
-       
+
 
         {{-- Add Account Type
          --}}
@@ -425,7 +434,7 @@
 
         {{-- Report Balance --}}
         @if(canAccess(['ReportBalance']))
-        <li> <a href="#">
+        <li> <a href="{{route('admin.account.account-report')}}">
                 <i class='bx bx-radio-circle'></i>
                 Report Balance
             </a>

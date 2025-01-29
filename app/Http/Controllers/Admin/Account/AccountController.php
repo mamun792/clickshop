@@ -26,6 +26,18 @@ class AccountController extends Controller
     }
 
 
+
+    public function dashboard()
+    {
+        $accountTypes = $this->accountTypeService->getAllAccountTypes();
+       $transactions = $this->accountTypeService->gettAllTransactions();
+        $lastMonthTransactions = $this->accountTypeService->getTransactionsByMonth(now()->subMonth());
+
+        $financialMetrics = $this->accountTypeService->calculateFinancialMetrics($transactions, $lastMonthTransactions);
+
+        return view('admin.account.dashboard', compact('accountTypes', 'transactions') + $financialMetrics);
+    }
+
     public function store(Request $request)
     {
 
@@ -188,7 +200,7 @@ class AccountController extends Controller
         });
 
         // Set the modified collection back to the paginator
-      $transfer->setCollection($transfers);
+        $transfer->setCollection($transfers);
 
         return view('admin.account.balanceTransfer', compact('transfer'));
     }
@@ -226,5 +238,33 @@ class AccountController extends Controller
 
 
         return response()->json(['success' => 'Balance transfer successful!']);
+    }
+
+    public function accountReport(Request $request)
+    {
+       // return $request->all();
+
+
+       $filters = $request->only(['startDate', 'endDate', 'account_type', 'transaction_type']);
+
+
+        $accountTypes = $this->accountTypeService->getAllAccountTypes();
+       $transactions = $this->accountTypeService->getAllTransactions($filters);
+
+       $totalDebit = $transactions->where('transaction_type', 'debit')->sum('amount');
+       $totalCredit = $transactions->where('transaction_type', 'credit')->sum('amount');
+       $netTotal = $totalCredit - $totalDebit;
+
+       $transfer = $this->accountTypeService->getAllTransfers($request->all());
+
+       // Flatten the data to include account names directly
+       $transfers = $transfer->getCollection()->map(function ($item) {
+           $item->from_balance = $item->fromAccount->name;
+           $item->to_balance = $item->toAccount->name;
+           return $item;
+       });
+
+     
+        return view('admin.account.accountReport', compact('accountTypes', 'transactions','netTotal','totalCredit','totalDebit','transfers'));
     }
 }

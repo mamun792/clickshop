@@ -21,6 +21,7 @@ interface AccountTypeServiceInterface
     // public function createIncome(array $data);
     // public function storeCredit(array $data);
     public function getAllTransactions(array $filters) : LengthAwarePaginator;
+    public function gettAllTransactions();
     public function storeDebit(array $data);
     public function getAllCredits(array $filters): LengthAwarePaginator;
 
@@ -28,6 +29,12 @@ interface AccountTypeServiceInterface
      public function storeBalanceTransfer(array $data);
    public function getAllTransfers(array $filters): LengthAwarePaginator;
 
+
+
+   public function getTransactionsByMonth($month);
+
+   
+    public function calculateFinancialMetrics($transactions, $lastMonthTransactions);
 
 
 }

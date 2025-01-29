@@ -21,6 +21,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
         Route::delete('/{accountType}', [AccountController::class, 'destroy'])->name('destroy');
 
+        //dashboard
+
+        Route::get('/dashboard', [AccountController::class, 'dashboard'])->name('dashboard');
+
         // accountPurpose
         Route::get('/accountPurpose', [AccountController::class, 'accountPurpose'])->name('accountPurpose');
 
@@ -56,6 +60,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         // store-balance-transfer
         Route::post('/balance-transfer', [AccountController::class, 'storeBalanceTransfer'])->name('store-balance-transfer');
 
+
+        // account report
+        Route::get('/account-report', [AccountController::class, 'accountReport'])->name('account-report');
 
     });
 });

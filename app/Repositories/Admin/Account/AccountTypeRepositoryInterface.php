@@ -24,4 +24,10 @@ interface AccountTypeRepositoryInterface
     public function getAlldebits(array $filters): LengthAwarePaginator;
     public function storeBalanceTransfer(array $data);
     public function getAllTransfers(array $filters): LengthAwarePaginator;
+    public function retriveAllTransactions();
+
+    //getTransactionsByMonth($month);
+    public function getTransactionsByMonth($month);
+    // calculateFinancialMetrics($transactions, $lastMonthTransactions);
+    public function calculateFinancialMetrics($transactions, $lastMonthTransactions);
 }

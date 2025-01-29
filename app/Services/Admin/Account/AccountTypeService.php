@@ -97,4 +97,22 @@ class AccountTypeService implements AccountTypeServiceInterface
         return $this->accountTypeRepository->getAllTransfers($filters);
     }
 
+    public function   gettAllTransactions()
+    {
+        return $this->accountTypeRepository->retriveAllTransactions();
+    }
+
+    // getTransactionsByMonth(now()->subMonth());
+    public function getTransactionsByMonth($month)
+    {
+        return $this->accountTypeRepository->getTransactionsByMonth($month);
+    }
+
+    // calculateFinancialMetrics($transactions, $lastMonthTransactions);
+
+    public function calculateFinancialMetrics($transactions, $lastMonthTransactions)
+    {
+        return $this->accountTypeRepository->calculateFinancialMetrics($transactions, $lastMonthTransactions);
+    }
+
 }

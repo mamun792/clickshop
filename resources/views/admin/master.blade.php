@@ -276,6 +276,7 @@ td.last2 {
     @include('admin.section.switcher')
 
 
+
     <!-- Bootstrap JS -->
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 
@@ -303,6 +304,8 @@ td.last2 {
     <script src="{{asset('assets/plugins/notifications/js/notification-custom-script.js')}}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+   
 
 
 
