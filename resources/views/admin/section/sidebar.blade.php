@@ -417,7 +417,13 @@
         </li>
         @endif
 
-
+        @if(canAccess(['AccountManagement']))
+        <li> <a href="{{route('admin.account.expense')}}">
+                <i class='bx bx-radio-circle'></i>
+                Expense
+            </a>
+        </li>
+        @endif
 
 
         {{-- Add Account Type
@@ -442,13 +448,7 @@
         @endif
         {{-- Balance --}}
 
-        @if(canAccess(['Balance']))
-        <li> <a href="#">
-                <i class='bx bx-radio-circle'></i>
-                Balance
-            </a>
-        </li>
-        @endif
+
 
         {{-- Fund Transfer --}}
         @if(canAccess(['FundTransfer']))

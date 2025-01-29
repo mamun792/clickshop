@@ -2,120 +2,82 @@
 
 @section('main-content')
 <div class="page-content">
-    <div class="row mb-3 ">
-
-
-        <a href="#" class="col">
-            <div class="card shadow-none border bg-gradient-start-2 h-100">
-                <div class="card-body p-20">
-                    <div class="d-flex flex-wrap align-items-center  gap-3">
-                        <div
-                            class="w-50-px h-50-px bg-purple rounded-circle d-flex justify-content-center align-items-center">
-                            <img src="{{ asset('images/pending.png') }}" class="text-white text-2xl mb-0">
+    <!-- Summary Cards Section -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-4">
+        <!-- Income Card -->
+        <div class="col">
+            <div class="card shadow-sm border-start-success h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-shape bg-success bg-opacity-10 rounded-3 p-3">
+                            <i class="bi bi-cash-coin fs-4 text-success"></i>
                         </div>
                         <div>
-                            <p class="fw-medium text-primary-light mb-1">Total Income</p>
-                            <h6 class="mb-0">{{ $income ?? 0 }}</h6>
+                            <h6 class="mb-1 text-muted">Total Income</h6>
+                            <h3 class="mb-0 fw-semibold">{{ $income ?? 0 }} ৳</h3>
                         </div>
-
-                        <div id="new-pending-chart" class="remove-tooltip-title rounded-tooltip-value"></div>
-
-                    </div>
-
-                </div>
-            </div>
-        </a>
-
-        <a href="#" class="col">
-            <div class="card shadow-none border bg-gradient-start-3 h-100">
-                <div class="card-body p-20">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1">
-                        <div
-                            class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
-                            <img src="{{ asset('images/delivered.png') }}" class="text-white text-2xl mb-0">
-                        </div>
-                        <div>
-                            <p class="fw-medium text-primary-light mb-1">Expense</p>
-                            <h6 class="mb-0">{{ $expense ?? 0 }}</h6>
-                        </div>
-
-                        <div id="monthly-deleviry-chart" class="remove-tooltip-title rounded-tooltip-value"></div>
-                    </div>
-
-                </div>
-            </div>
-        </a>
-
-        {{-- <a href="#" class="col">
-            <div class="card shadow-none border bg-gradient-start-2 h-100">
-                <div class="card-body p-20">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1">
-                        <div
-                            class="w-50-px h-50-px bg-purple rounded-circle d-flex justify-content-center align-items-center">
-                            <img src="{{ asset('images/Returned Order.png') }}" class="text-white text-2xl mb-0">
-                        </div>
-                        <div>
-                            <p class="fw-medium text-primary-light mb-1">Balance</p>
-                            <h6 class="mb-0">{{ $balance ?? 0 }}</h6>
-                        </div>
-
-                        <div id="total-return-chart" class="remove-tooltip-title rounded-tooltip-value"></div>
-                    </div>
-
-                </div>
-            </div>
-        </a> --}}
-
-        @php
-            // Calculate income, expense, and balance
-            $income = $income ?? 0;
-            $expense = $expense ?? 0;
-            $balance = $income - $expense;
-
-            // Check if the balance is negative
-            $balanceIsNegative = $balance < 0;
-        @endphp
-        <a href="#" class="col">
-            <div class="card shadow-none border {{ $balanceIsNegative ? 'bg-danger' : 'bg-success' }} h-100">
-                <div class="card-body p-20">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1">
-                        <div
-                            class="w-50-px h-50-px bg-purple rounded-circle d-flex justify-content-center align-items-center">
-                            <img src="{{ asset('images/Returned Order.png') }}" class="text-white text-2xl mb-0">
-                        </div>
-                        <div>
-                            <p class="fw-medium text-primary-light mb-1">Balance</p>
-                            <h6 class="mb-0 {{ $balanceIsNegative ? 'text-white' : 'text-dark' }}">{{ $balance }}</h6>
-                        </div>
-                        <div id="total-return-chart" class="remove-tooltip-title rounded-tooltip-value"></div>
                     </div>
                 </div>
             </div>
-        </a>
+        </div>
 
-        <a href="#" class="col">
-            <div class="card shadow-none border bg-gradient-start-3 h-100">
-                <div class="card-body p-20">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1">
-                        <div
-                            class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
-                            <img src="{{ asset('images/Total Sale.png') }}" class="text-white text-2xl mb-0"></iconify-icon>
+        <!-- Expense Card -->
+        <div class="col">
+            <div class="card shadow-sm border-start-danger h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-shape bg-danger bg-opacity-10 rounded-3 p-3">
+                            <i class="bi bi-arrow-up-right-circle fs-4 text-danger"></i>
                         </div>
                         <div>
-                            <p class="fw-medium text-primary-light mb-1">Account Type</p>
-                            <h6 class="mb-0">
-                                {{ $accountType ?? 0 }}
-
-                            </h6>
+                            <h6 class="mb-1 text-muted">Total Expense</h6>
+                            <h3 class="mb-0 fw-semibold">{{ $expense ?? 0 }} ৳</h3>
                         </div>
-
-                        <div id="total-sal-chart" class="remove-tooltip-title rounded-tooltip-value"></div>
                     </div>
-
                 </div>
-            </div><!-- card end -->
-        </a>
+            </div>
+        </div>
 
+        <!-- Balance Card -->
+        <div class="col">
+            <div class="card shadow-sm h-100 border-start-{{ $balance < 0 ? 'danger' : 'success' }}">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-shape bg-{{ $balance < 0 ? 'danger' : 'success' }} bg-opacity-10 rounded-3 p-3">
+                            <i class="bi bi-wallet2 fs-4 text-{{ $balance < 0 ? 'danger' : 'success' }}"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-muted">Current Balance</h6>
+                            <h3 class="mb-0 fw-semibold">
+                                {{ $balance }} ৳
+                                @if($balance < 0)
+                                <i class="bi bi-arrow-down-right fs-5 text-danger"></i>
+                                @else
+                                <i class="bi bi-arrow-up-right fs-5 text-success"></i>
+                                @endif
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Type Card -->
+        <div class="col">
+            <div class="card shadow-sm border-start-info h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-shape bg-info bg-opacity-10 rounded-3 p-3">
+                            <i class="bi bi-bank2 fs-4 text-info"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-muted">Account Type</h6>
+                            <h3 class="mb-0 fw-semibold">{{ $accountType ?? 'N/A' }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row mb-3">
 
@@ -432,7 +394,7 @@
                 </div>
 
 
-            
+
 
 
         </div>

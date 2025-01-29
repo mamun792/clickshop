@@ -63,6 +63,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
         // account report
         Route::get('/account-report', [AccountController::class, 'accountReport'])->name('account-report');
+        // expense
+        Route::get('/expense', [AccountController::class, 'expense'])->name('expense');
 
     });
 });

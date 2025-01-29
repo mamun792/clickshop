@@ -20,7 +20,7 @@
             </div>
 
             <!-- Quick Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
                 <!-- Total Income -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border-l-4 border-green-500 hover:shadow-md transition-shadow">
                     <div class="flex justify-between items-center">
@@ -97,7 +97,7 @@
             </div>
 
             <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
                 <!-- Monthly Overview Chart -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Monthly Overview</h3>
@@ -148,11 +148,11 @@
 
 
 
-        // Get dynamic data from backend
+
         const backendTransactions = @json($transactions);
         const accountTypes = @json($accountTypes);
 
-        // Monthly Overview Chart
+
         const monthlyCtx = document.getElementById('monthlyOverview').getContext('2d');
 
         // Process transaction data for chart
@@ -217,7 +217,7 @@
 
         // Populate Recent Transactions
         const transactionTable = document.getElementById('transactionTable');
-        transactionTable.innerHTML = ''; // Clear existing content
+        transactionTable.innerHTML = '';
 
         backendTransactions.forEach(transaction => {
             const row = document.createElement('tr');

@@ -129,6 +129,7 @@ class AccountController extends Controller
     public function income(Request $request)
     {
 
+
         $filters = $request->only(['startDate', 'endDate', 'account_type']);
 
 
@@ -151,9 +152,32 @@ class AccountController extends Controller
         return view('admin.account.income', compact('credits', 'debits', 'accountTypes', 'income', 'expense', 'balance', 'accountType'));
     }
 
+    // expense()
+
+    public function expense(Request $request)
+    {
+        $filters = $request->only(['startDate', 'endDate', 'account_type']);
+
+        $allTransactions = $this->accountTypeService->getAllTransactions($filters);
+
+        $credits = $this->accountTypeService->getAllCredits($filters);
+        $debits = $this->accountTypeService->getAllDebits($filters);
+
+        $accountTypes = $this->accountTypeService->getAllAccountTypes();
+
+        // Calculate income (sum of credits), expenses (sum of debits), and balance (income - expense)
+        $income = $credits->sum('amount');
+        $expense = $debits->sum('amount');
+        $balance = $income - $expense;
+
+        $accountType = $accountTypes->count();
+        return view('admin.account.expense', compact('credits', 'debits', 'accountTypes', 'income', 'expense', 'balance', 'accountType'));
+    }
+
     //credit
     public function credit()
     {
+
         $accountTypes = $this->accountTypeService->getAllAccountTypes();
         $purposes = $this->accountTypeService->getAllPurposes();
         return view('admin.account.credit', compact('accountTypes', 'purposes'));
@@ -264,7 +288,7 @@ class AccountController extends Controller
            return $item;
        });
 
-     
+
         return view('admin.account.accountReport', compact('accountTypes', 'transactions','netTotal','totalCredit','totalDebit','transfers'));
     }
 }
