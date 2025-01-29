@@ -2,7 +2,7 @@
 
 @section('main-content')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 
@@ -97,19 +97,20 @@
             </div>
 
             <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-3">
                 <!-- Monthly Overview Chart -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Monthly Overview</h3>
-                    <canvas id="monthlyOverview" height="300"></canvas>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+                    <h3 class="text-md font-medium text-gray-800 dark:text-white mb-1">Monthly Overview</h3>
+                    <canvas id="monthlyOverview" height="150"></canvas>
                 </div>
 
                 <!-- Income Distribution Chart -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Income Distribution</h3>
-                    <canvas id="incomeDistribution" height="300"></canvas>
+                <div class="bg-white dark:bg-gray-800  shadow-sm p-4">
+                    <h3 class="text-md font-medium text-gray-800 dark:text-white mb-1">Income Distribution</h3>
+                    <canvas id="incomeDistributions" height="50"></canvas>
                 </div>
             </div>
+
 
             <!-- Recent Transactions -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
@@ -192,7 +193,7 @@
         });
 
         // Income Distribution Chart
-        const distributionCtx = document.getElementById('incomeDistribution').getContext('2d');
+        const distributionCtx = document.getElementById('incomeDistributions').getContext('2d');
 
         const accountTotals = backendTransactions.reduce((acc, transaction) => {
             const account = accountTypes.find(a => a.id === transaction.account_id)?.name || 'Unknown';

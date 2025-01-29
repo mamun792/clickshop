@@ -199,7 +199,7 @@
                         </form>
 
                         <table class="table table-striped" id="transactionsTable">
-                            <thead>
+                            <thead class="bg-light-purple">
                                 <tr>
                                     <th>#</th>
                                     <th>Date</th>

@@ -104,10 +104,10 @@
             <!-- Transactions Section -->
             <div class="col-lg-6 mb-4">
                 <div class="card shadow-lg border-0">
-                    <div class="card-header bg-gradient-success text-white py-3">
+                    <div class="card-header ">
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-0"><i class="fas fa-list-alt me-2"></i>Transaction Overview</h4>
-                            <button class="btn btn-light btn-sm" id="downloadCSV">
+                            <button class="btn btn-light btn-sm bg-gradient-success text-white " id="downloadCSV">
                                 <i class="fas fa-file-csv me-2"></i>Export CSV
                             </button>
                         </div>
@@ -171,10 +171,10 @@
             <!-- Transfers Section -->
             <div class="col-lg-6 mb-4">
                 <div class="card shadow-lg border-0">
-                    <div class="card-header bg-gradient-purple text-white py-3">
+                    <div class="card-header  py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h4 class="mb-0"><i class="fas fa-random me-2"></i>Fund Transfers</h4>
-                            <button class="btn btn-light btn-sm" id="downloadTransferCSV">
+                            <button class="btn btn-light btn-sm bg-gradient-purple text-white" id="downloadTransferCSV">
                                 <i class="fas fa-file-csv me-2"></i>Export CSV
                             </button>
                         </div>
@@ -365,7 +365,7 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            
+
         });
 
     });
