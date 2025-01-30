@@ -488,6 +488,15 @@ class PermissionSeeder extends Seeder
                 'group' => 'Account Management',
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'id' => 53,
+                'name' => 'AnalyticsDashboard',
+                'guard_name' => 'web',
+                'group' => 'Dashboard',
+                'created_at' => now(),
+                'updated_at' => now(),
+
             ]
 
 
