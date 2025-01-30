@@ -7,6 +7,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AnalyticsService
 {
@@ -167,6 +169,85 @@ class AnalyticsService
                     ];
                 });
         });
+    }
+
+    /**
+     * Get visitor distribution by country
+     */
+
+     const BD_DIVISIONS = [
+        'Dhaka' => ['192.168.0.0/24', '10.0.1.0/24'],
+        'Chittagong' => ['192.168.1.0/24'],
+        'Rajshahi' => ['192.168.2.0/24'],
+        'Khulna' => ['192.168.3.0/24'],
+        'Barishal' => ['192.168.4.0/24'],
+        'Sylhet' => ['192.168.5.0/24'],
+        'Rangpur' => ['192.168.6.0/24'],
+        'Mymensingh' => ['192.168.7.0/24'],
+    ];
+
+    public static function getLocation($ip)
+    {
+        if (self::isLocalIp($ip)) {
+            return [
+                'division' => self::mapLocalIpToDivision($ip),
+                'country' => 'BD'
+            ];
+        }
+
+        return Cache::remember("ip_location_{$ip}", now()->addDays(30), function () use ($ip) {
+            $response = Http::get("https://ipinfo.io/{$ip}/json?token=".config('services.ipinfo.token'));
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $country = $data['country'] ?? 'Unknown';
+
+                return [
+                    'country' => $country,
+                    'division' => ($country === 'BD')
+                        ? self::mapDivision($data['region'] ?? 'Unknown')
+                        : 'International'
+                ];
+            }
+
+            return ['division' => 'Unknown', 'country' => 'Unknown'];
+        });
+    }
+
+    private static function mapLocalIpToDivision($ip)
+    {
+        foreach (self::BD_DIVISIONS as $division => $ranges) {
+            foreach ($ranges as $range) {
+                if (self::ipInRange($ip, $range)) {
+                    return $division;
+                }
+            }
+        }
+        return 'Local Network';
+    }
+
+    private static function ipInRange($ip, $range)
+    {
+        list($subnet, $mask) = explode('/', $range);
+        $ip_long = ip2long($ip);
+        $subnet_long = ip2long($subnet);
+        $mask_long = ~((1 << (32 - $mask)) - 1);
+        return ($ip_long & $mask_long) === ($subnet_long & $mask_long);
+    }
+
+    private static function mapDivision($division)
+    {
+        foreach (array_keys(self::BD_DIVISIONS) as $validDivision) {
+            if (stripos($division, $validDivision) !== false) {
+                return $validDivision;
+            }
+        }
+        return 'Other Division';
+    }
+
+    private static function isLocalIp($ip)
+    {
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false;
     }
 }
 

@@ -12,7 +12,7 @@
                 <select id="filter-range" class="form-select w-auto" name="range">
                     <option value="1">today</option>
                     <option value="4">Last 7 days</option>
-                   
+
                 </select>
                </div>
 
@@ -117,6 +117,103 @@
                             </div>
                         </div>
                     </div>
+
+
+                    {{-- //// --}}
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary active" data-view="chart">Chart</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-view="table">Table</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Chart View -->
+                                    <div class="col-md-8" id="divisionChart">
+                                        <h4 class="card-title">Visitor Distribution</h4>
+                                        <div class="chart-container">
+                                            <canvas id="visitorDistributionChart"></canvas>
+                                        </div>
+                                        <div class="mt-4">
+                                            <h5>Geographical Spread</h5>
+                                            <div class="progress-stacked">
+                                                @foreach($country_counts as $country => $count)
+                                                    @php
+                                                        $percentage = ($count / array_sum($country_counts)) * 100;
+                                                    @endphp
+                                                    <div class="progress" style="width: {{ $percentage }}%">
+                                                        <div class="progress-bar"
+                                                             role="progressbar"
+                                                             style="background-color: {{ $loop->index % 2 ? '#4e73df' : '#36b9cc' }}"
+                                                             aria-valuenow="{{ $percentage }}"
+                                                             aria-valuemin="0"
+                                                             aria-valuemax="100">
+                                                            <span class="progress-label">{{ $country }} ({{ number_format($percentage, 1) }}%)</span>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Table View (Initially Hidden) -->
+                                    <div class="col-md-8 d-none" id="tableView">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Location</th>
+                                                        <th>Visitors</th>
+                                                        <th>Country</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($distribution as $location => $count)
+                                                    @php
+                                                    $parts = explode(' (', rtrim($location, ')'));
+                                                    $division = count($parts) > 1 ? $parts[0] : 'Local Network';
+                                                    $country = count($parts) > 1 ? $parts[1] : $parts[0];
+                                                @endphp
+                                                        <tr>
+                                                            <td>{{ $division }}</td>
+                                                            <td>{{ $count }}</td>
+                                                            <td>{{ $country }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                                {{-- <pre>{{dd($distribution) }}</pre> --}}
+
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Country Breakdown -->
+                                    <div class="col-md-4">
+                                        <h5>Country Distribution</h5>
+                        <ul class="list-group">
+                            @foreach($country_counts as $country => $count)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ $country }}
+                                    <span class="badge bg-primary rounded-pill">{{ $count }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+                    {{-- /// --}}
                 </div>
             </div>
         </div>
@@ -322,5 +419,121 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+
+
+     <script>
+                        // Chart configuration
+                        let divisionChart, countryChart;
+                        const chartColors = [
+                            '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e',
+                            '#e74a3b', '#858796', '#6f42c1', '#fd7e14'
+                        ];
+
+                        function initCharts() {
+                            // Destroy existing charts
+                            if(divisionChart) divisionChart.destroy();
+                            if(countryChart) countryChart.destroy();
+
+                            // Visitor Distribution Chart
+                            const divisionCtx = document.getElementById('visitorDistributionChart').getContext('2d');
+                            divisionChart = new Chart(divisionCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: {!! json_encode(array_keys($distribution)) !!},
+                                    datasets: [{
+                                        data: {!! json_encode(array_values($distribution)) !!},
+                                        backgroundColor: chartColors,
+                                        borderColor: '#fff',
+                                        borderWidth: 2
+                                    }]
+                                },
+                                options: {
+                                    maintainAspectRatio: false,
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            position: 'right',
+                                            labels: {
+                                                boxWidth: 15,
+                                                padding: 15,
+                                                font: {
+                                                    size: 12
+                                                }
+                                            }
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                    const value = context.raw || 0;
+                                                    const percentage = ((value / total) * 100).toFixed(1);
+                                                    return `${context.label}: ${value} (${percentage}%)`;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+
+                            // Country Distribution Chart
+                            const countryCtx = document.getElementById('countryDistributionChart').getContext('2d');
+                            countryChart = new Chart(countryCtx, {
+                                type: 'pie',
+                                data: {
+                                    labels: {!! json_encode(array_keys($country_counts)) !!},
+                                    datasets: [{
+                                        data: {!! json_encode(array_values($country_counts)) !!},
+                                        backgroundColor: chartColors,
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    maintainAspectRatio: false,
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                    const percentage = ((context.raw / total) * 100).toFixed(1);
+                                                    return `${context.label}: ${context.raw} (${percentage}%)`;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        // Initialize charts on page load
+                        document.addEventListener('DOMContentLoaded', initCharts);
+
+                        // Toggle between chart and table view
+                        document.querySelectorAll('[data-view]').forEach(button => {
+                            button.addEventListener('click', () => {
+                                const showChart = button.dataset.view === 'chart';
+
+                                document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
+                                button.classList.add('active');
+
+                                document.getElementById('divisionChart').classList.toggle('d-none', !showChart);
+                                document.getElementById('tableView').classList.toggle('d-none', showChart);
+
+                                // Reinitialize chart when switching back to chart view
+                                if(showChart) {
+                                    initCharts();
+                                }
+                            });
+                        });
+
+                        // Handle window resize
+                        window.addEventListener('resize', () => {
+                            initCharts();
+                        });
+                    </script>
+
 @endpush
 @endsection

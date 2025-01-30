@@ -41,13 +41,46 @@ class DashboardController extends Controller
         $range = $request->get('range', 1);
         $days = $request->get('days', 7);
 
+        $sessions = DB::table('sessions')
+        ->select('ip_address')
+        ->whereNotNull('ip_address')
+        ->get();
+
+        $distribution = [];
+        $countryCounts = [];
+
+        foreach ($sessions as $session) {
+            $location = $this->analyticsService->getLocation($session->ip_address);
+            $division = $location['division'];
+            Log::info($division);
+            $country = $location['country'];
+
+            // For detailed distribution
+            $distributionKey = "$division ($country)";
+            $distribution[$distributionKey] = ($distribution[$distributionKey] ?? 0) + 1;
+
+            // For country-wise counts
+            $countryCounts[$country] = ($countryCounts[$country] ?? 0) + 1;
+        }
+
+
+
+       // return $distribution;
+      arsort($distribution);
+       arsort($countryCounts);
+
+
+
         $data = [
             'total_visitors' => $this->analyticsService->getTotalVisitors($range),
             'unique_visitors' => $this->analyticsService->getUniqueVisitors($range),
             'avg_session_duration' => $this->analyticsService->getAverageSessionDuration($range),
             'live_visitors' => $this->analyticsService->getLiveVisitors(),
             'visitor_trends' => $this->analyticsService->getVisitorTrends($days),
-            'user_engagement' => $this->analyticsService->getUserEngagement($days)
+            'user_engagement' => $this->analyticsService->getUserEngagement($days),
+
+            'country_counts' => $countryCounts,
+            'distribution' => $distribution,
         ];
 
         if ($request->ajax()) {
@@ -57,25 +90,7 @@ class DashboardController extends Controller
         return view('analytics.index', $data);
     }
 
-    public function getMetrics(Request $request)
-    {
-        $range = $request->get('range', 1);
 
-        return response()->json([
-            'total_visitors' => $this->analyticsService->getTotalVisitors($range),
-            'unique_visitors' => $this->analyticsService->getUniqueVisitors($range),
-            'avg_session_duration' => $this->analyticsService->getAverageSessionDuration($range),
-            'live_visitors' => $this->analyticsService->getLiveVisitors(),
-        ]);
-    }
 
-    public function getChartData(Request $request)
-    {
-        $days = $request->get('days', 7);
 
-        return response()->json([
-            'visitor_trends' => $this->analyticsService->getVisitorTrends($days),
-            'user_engagement' => $this->analyticsService->getUserEngagement($days),
-        ]);
-    }
 }
