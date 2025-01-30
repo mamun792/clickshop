@@ -67,6 +67,7 @@
 
 
 
+
     <title>
         {{ siteInfo('app_name') }}
     </title>
@@ -305,7 +306,7 @@ td.last2 {
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
-   
+
 
 
 

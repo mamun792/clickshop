@@ -9,9 +9,10 @@
             <div class="card shadow-sm border-start-success h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="icon-shape bg-success bg-opacity-10 rounded-3 p-3">
-                            <i class="bi bi-cash-coin fs-4 text-success"></i>
+                        <div class="icon-shape bg-success bg-opacity-10   rounded-3 p-3">
+                            <img src="{{ asset('uploads/total income.png') }}" style="width: 40px; height: 35px" />
                         </div>
+
                         <div>
                             <h6 class="mb-1 text-muted">Total Income</h6>
                             <h3 class="mb-0 fw-semibold">{{ $income ?? 0 }} ৳</h3>
@@ -27,7 +28,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center gap-3">
                         <div class="icon-shape bg-danger bg-opacity-10 rounded-3 p-3">
-                            <i class="bi bi-arrow-up-right-circle fs-4 text-danger"></i>
+                            <img src="{{ asset('uploads/total expense.png') }}" style="width: 40px; height: 35px" />
                         </div>
                         <div>
                             <h6 class="mb-1 text-muted">Total Expense</h6>
@@ -44,16 +45,19 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center gap-3">
                         <div class="icon-shape bg-{{ $balance < 0 ? 'danger' : 'success' }} bg-opacity-10 rounded-3 p-3">
-                            <i class="bi bi-wallet2 fs-4 text-{{ $balance < 0 ? 'danger' : 'success' }}"></i>
+                            <img src="{{ asset('uploads/total balance.png') }}" style="width: 40px; height: 35px" />
                         </div>
                         <div>
                             <h6 class="mb-1 text-muted">Current Balance</h6>
                             <h3 class="mb-0 fw-semibold">
                                 {{ $balance }} ৳
                                 @if($balance < 0)
-                                <i class="bi bi-arrow-down-right fs-5 text-danger"></i>
+                                <img src="{{ asset('uploads/arrow-down.png') }}" style="width: 20px; height: 20px" />
                                 @else
-                                <i class="bi bi-arrow-up-right fs-5 text-success"></i>
+
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v7.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 12.293V4a.5.5 0 0 1 .5-.5z"/>
+                                  </svg>
                                 @endif
                             </h3>
                         </div>
@@ -68,7 +72,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center gap-3">
                         <div class="icon-shape bg-info bg-opacity-10 rounded-3 p-3">
-                            <i class="bi bi-bank2 fs-4 text-info"></i>
+                            <img src="{{ asset('uploads/account type.png') }}" style="width: 40px; height: 35px" />
                         </div>
                         <div>
                             <h6 class="mb-1 text-muted">Account Type</h6>
@@ -233,7 +237,7 @@
 
     document.getElementById('exportButton').addEventListener('click', function() {
     var table = document.getElementById("transactionsTable");
-    var html = table.outerHTML; 
+    var html = table.outerHTML;
     var url = 'data:application/vnd.ms-excel,' + escape(html);
     var a = document.createElement('a');
 

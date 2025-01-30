@@ -8,6 +8,7 @@ use App\Services\Admin\Account\AccountTypeServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 class AccountController extends Controller
@@ -79,8 +80,12 @@ class AccountController extends Controller
     public function accountPurpose()
     {
 
-        $purposes = $this->accountTypeService->getAllPurposes();
-        return view('admin.account.accountPurpose', compact('purposes'));
+       $purposes = $this->accountTypeService->getAllPurposes();
+       $transactions = $this->accountTypeService->gettAllTransactions();
+        $income = $transactions->where('transaction_type', 'credit')->sum('amount');
+        $expense = $transactions->where('transaction_type', 'debit')->sum('amount');
+       $balance = $income - $expense;
+        return view('admin.account.accountPurpose', compact('purposes','income','expense','balance'));
     }
 
     public function addPurpose()
@@ -231,7 +236,19 @@ class AccountController extends Controller
 
     public function balanceTransferForm()
     {
-        $accounts = $this->accountTypeService->getAllAccountTypes();
+      $account = $this->accountTypeService->getAllAccountTypes();
+       $accounts= DB::table('account_types')
+      ->join('transactions', 'account_types.id', '=', 'transactions.account_id')
+      ->select(
+          'account_types.id',
+          'account_types.name',
+          DB::raw('SUM(transactions.amount) as total_amount')
+      )
+      ->groupBy('account_types.id', 'account_types.name')
+      ->get();
+
+
+
         return view('admin.account.balanceTransferForm', compact('accounts'));
     }
 
@@ -261,7 +278,7 @@ class AccountController extends Controller
         $pp =   $this->accountTypeService->storeBalanceTransfer($data);
 
 
-        return response()->json(['success' => 'Balance transfer successful!']);
+       return back()->with('success', 'Balance transfer added successfully!');
     }
 
     public function accountReport(Request $request)

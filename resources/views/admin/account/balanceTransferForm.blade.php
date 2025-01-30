@@ -1,69 +1,104 @@
 @extends('admin.master')
 
 @section('main-content')
-<div class="page-content">
- 
-
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">Balance Transfer</h5>
+<div class="page-content p-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header  py-3">
+            <h5 class="card-title mb-0 fs-5 fw-medium">Balance Transfer</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
             <form id="balanceTransferForm" action="{{ route('admin.account.balance-transfer') }}" method="POST">
                 @csrf
-                <div class="row mb-3">
-                    <label for="from_balance" class="col-sm-2 col-form-label">From</label>
-                    <div class="col-sm-10">
-                        <select id="from_balance" name="from_balance" class="form-select">
-                            <option value="">Select Balance</option>
+                <!-- From Account -->
+                <div class="row mb-4 align-items-center">
+                    <label for="from_balance" class="col-sm-3 col-form-label fw-medium">From Account</label>
+                    <div class="col-sm-9">
+                        <select id="from_balance" name="from_balance" class="form-select form-select-lg">
+                            <option value="">Select Source Account</option>
                             @foreach($accounts as $account)
-                                <option value="{{ $account->id }}" data-balance="{{ $account->balance }}">{{ $account->name }} ({{ $account->balance }})</option>
+                                <option value="{{ $account->id }}" data-balance="{{ $account->total_amount }}">
+                                    {{ $account->name }} ({{$account->total_amount }})
+                                </option>
                             @endforeach
                         </select>
-                        <div id="from_balance_error" class="text-danger"></div>
+                        <div id="from_balance_error" class="invalid-feedback d-block"></div>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <label for="to_balance" class="col-sm-2 col-form-label">To</label>
-                    <div class="col-sm-10">
-                        <select id="to_balance" name="to_balance" class="form-select" >
-                            <option value="">Select Balance</option>
+
+                <!-- To Account -->
+                <div class="row mb-4 align-items-center">
+                    <label for="to_balance" class="col-sm-3 col-form-label fw-medium">To Account</label>
+                    <div class="col-sm-9">
+                        <select id="to_balance" name="to_balance" class="form-select form-select-lg">
+                            <option value="">Select Destination Account</option>
                             @foreach($accounts as $account)
-                                <option value="{{ $account->id }}" data-balance="{{ $account->balance }}">{{ $account->name }} ({{ $account->balance }})</option>
+                                <option value="{{ $account->id }}" data-balance="{{ $account->total_amount }}">
+                                    {{ $account->name }} ({{ $account->total_amount }})
+                                </option>
                             @endforeach
                         </select>
-                        <div id="to_balance_error" class="text-danger"></div>
+                        <div id="to_balance_error" class="invalid-feedback d-block"></div>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <label for="amount" class="col-sm-2 col-form-label">Amount</label>
-                    <div class="col-sm-10">
-                        <input type="number" id="amount" name="amount" class="form-control" value="0" >
-                        <div id="amount_error" class="text-danger"></div>
+
+                <!-- Amount Fields -->
+                <div class="bg-light p-4 rounded-3 mb-4">
+                    <!-- Amount -->
+                    <div class="row mb-3 align-items-center">
+                        <label for="amount" class="col-sm-3 col-form-label fw-medium">Transfer Amount</label>
+                        <div class="col-sm-9">
+                            <input type="number" id="amount" name="amount"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter amount"
+                                   value="0">
+                            <div id="amount_error" class="invalid-feedback d-block"></div>
+                        </div>
+                    </div>
+
+                    <!-- Cost -->
+                    <div class="row mb-3 align-items-center">
+                        <label for="cost" class="col-sm-3 col-form-label fw-medium">Transfer Fee</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" id="cost" name="cost"
+                                       class="form-control form-control-lg"
+                                       placeholder="Enter fee"
+                                       value="0">
+                                <span class="input-group-text bg-white">%</span>
+                            </div>
+                            <div id="cost_error" class="invalid-feedback d-block"></div>
+                        </div>
+                    </div>
+
+                    <!-- Net Amount -->
+                    <div class="row align-items-center">
+                        <label for="transfer_amount" class="col-sm-3 col-form-label fw-medium">Net Amount</label>
+                        <div class="col-sm-9">
+                            <input type="number" id="transfer_amount" name="transfer_amount"
+                                   class="form-control form-control-lg bg-light"
+                                   value="0"
+                                   readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <label for="cost" class="col-sm-2 col-form-label">Cost </label>
-                    <div class="col-sm-10">
-                        <input type="number" id="cost" name="cost" class="form-control" value="0" >
-                        <div id="cost_error" class="text-danger"></div>
+
+                <!-- Comment -->
+                <div class="row mb-4 align-items-center">
+                    <label for="comment" class="col-sm-3 col-form-label fw-medium">Notes</label>
+                    <div class="col-sm-9">
+                        <textarea id="comment" name="comment"
+                                  class="form-control form-control-lg"
+                                  rows="2"
+                                  placeholder="Add transfer notes"></textarea>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <label for="transfer_amount" class="col-sm-2 col-form-label">Transfer Amount</label>
-                    <div class="col-sm-10">
-                        <input type="number" id="transfer_amount" name="transfer_amount" class="form-control" value="0" readonly>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <label for="comment" class="col-sm-2 col-form-label">Comment</label>
-                    <div class="col-sm-10">
-                        <textarea id="comment" name="comment" class="form-control" rows="3"></textarea>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-10 offset-sm-2">
-                        <button type="submit" class="btn btn-primary">Transfer</button>
+
+                <!-- Submit Button -->
+                <div class="row mt-5">
+                    <div class="col-sm-9 offset-sm-3">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 py-1">
+                            <i class="bi bi-arrow-left-right me-2"></i>Confirm Transfer
+                        </button>
                     </div>
                 </div>
             </form>
@@ -73,71 +108,61 @@
 @endsection
 
 @push('scripts')
-
 <script>
-    // Validate form on submit
+    // Enhanced validation with real-time feedback
     document.getElementById('balanceTransferForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+        event.preventDefault();
+        clearErrors();
 
-    // Reset error messages
-    document.getElementById('from_balance_error').innerText = '';
-    document.getElementById('to_balance_error').innerText = '';
-    document.getElementById('amount_error').innerText = '';
-    document.getElementById('cost_error').innerText = '';
+        const elements = {
+            from: document.getElementById('from_balance'),
+            to: document.getElementById('to_balance'),
+            amount: document.getElementById('amount'),
+            cost: document.getElementById('cost')
+        };
 
-    // Get form data
-    const fromBalanceSelect = document.getElementById('from_balance');
-    const toBalanceSelect = document.getElementById('to_balance');
-    const amount = parseFloat(document.getElementById('amount').value);
-    const cost = parseFloat(document.getElementById('cost').value);
+        let isValid = true;
 
-    const fromBalanceId = fromBalanceSelect.value;
-    const toBalanceId = toBalanceSelect.value;
+        // Validation checks
+        if (elements.from.value === elements.to.value) {
+            showError('to_balance_error', 'Source and destination accounts must be different');
+            isValid = false;
+        }
 
-    const fromBalance = fromBalanceSelect.options[fromBalanceSelect.selectedIndex]?.dataset.balance;
-    const toBalance = toBalanceSelect.options[toBalanceSelect.selectedIndex]?.dataset.balance;
+        if (elements.amount.value <= 0 || isNaN(elements.amount.value)) {
+            showError('amount_error', 'Please enter a valid transfer amount');
+            isValid = false;
+        }
 
-    let isValid = true;
+        if (parseFloat(elements.from.options[elements.from.selectedIndex]?.dataset.balance) < elements.amount.value) {
+            showError('amount_error', 'Insufficient balance in source account');
+            isValid = false;
+        }
 
-    // 1. From and To balance should not be the same
-    if (fromBalanceId === toBalanceId) {
-        document.getElementById('to_balance_error').innerText = 'The "From" and "To" balances cannot be the same.';
-        isValid = false;
+        if (isValid) this.submit();
+    });
+
+    // Real-time amount calculation
+    function updateTransferAmount() {
+    const amount = parseFloat(document.getElementById('amount').value) || 0;
+    const cost = parseFloat(document.getElementById('cost').value) || 0;
+
+    const transferAmount = amount - cost; // Deducting flat cost
+    document.getElementById('transfer_amount').value = transferAmount.toFixed(2);
+}
+
+
+    // Helper functions
+    function clearErrors() {
+        document.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
     }
 
-    // 2. Check if the amount is valid and positive
-    if (isNaN(amount) || amount <= 0) {
-        document.getElementById('amount_error').innerText = 'Please enter a valid amount greater than zero.';
-        isValid = false;
+    function showError(elementId, message) {
+        document.getElementById(elementId).innerText = message;
     }
 
-    // 3. Check if the transfer amount is valid based on the balance of the "From" account
-    if (parseFloat(fromBalance) < amount) {
-        document.getElementById('amount_error').innerText = 'Insufficient balance to transfer.';
-        isValid = false;
-    }
-
-    // If form is valid, proceed with the transfer
-    if (isValid) {
-        this.submit(); // Submit the form
-    }
-});
-
-
-
-
-    // Update transfer amount based on amount and cost percentage
+    // Event listeners
     document.getElementById('amount').addEventListener('input', updateTransferAmount);
     document.getElementById('cost').addEventListener('input', updateTransferAmount);
-
-    function updateTransferAmount() {
-        const amount = parseFloat(document.getElementById('amount').value) || 0;
-        const cost = parseFloat(document.getElementById('cost').value) || 0;
-
-        const transferAmount = amount - cost ;
-        document.getElementById('transfer_amount').value = transferAmount.toFixed(2);
-    }
 </script>
-
-
 @endpush

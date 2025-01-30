@@ -159,11 +159,7 @@ class AccountTypeRepository implements AccountTypeRepositoryInterface
         $toAccount = Transaction::where('account_id', $data['to_balance'])->latest()->first();
 
 
-        // Check for sufficient balance in the from account
-        if ($fromAccount->amount < $data['transfer_amount']) {
 
-            throw new \Exception('Insufficient balance in the source account.');
-        }
 
         // Update the balance in the from account DB::beginTransaction();
         try {
@@ -190,13 +186,13 @@ class AccountTypeRepository implements AccountTypeRepositoryInterface
             ]);
 
 
-
+  
             // Commit the transaction
             DB::commit();
         } catch (\Exception $e) {
             // Rollback the transaction
             DB::rollBack();
-            //  Log::error($e->getMessage());
+              Log::error($e->getMessage());
             return $e->getMessage();
         }
     }

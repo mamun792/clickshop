@@ -395,7 +395,7 @@
 
 <li>
     <a href="javascript:;" class="has-arrow">
-        <div class="parent-icon"><img src="{{ asset('uploads/key.png') }}" style="width: 30px; height: 30px" />
+        <div class="parent-icon"><img src="{{ asset('uploads/budget.png') }}" style="width: 30px; height: 30px" />
         </div>
         <div class="menu-title">Account </div>
     </a>
@@ -403,7 +403,7 @@
         @if(canAccess(['AccountManagement']))
         <li> <a href="{{ route('admin.account.dashboard') }}">
                 <i class='bx bx-radio-circle'></i>
-                Account Dashboard
+              Dashboard
             </a>
         </li>
         @endif

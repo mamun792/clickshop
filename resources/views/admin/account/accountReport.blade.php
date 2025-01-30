@@ -7,12 +7,12 @@
             <div class="col-md-4 mb-3">
                 <div class="card bg-success text-white shadow-lg hover-transform">
                     <div class="card-body d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-wallet fa-3x opacity-75"></i>
+                        <div class="icon-shape bg-success bg-opacity-10   rounded-3 p-3">
+                            <img src="{{ asset('uploads/total income.png') }}" style="width: 40px; height: 35px" />
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h5 class="card-title mb-1">Total Income</h5>
-                            <h2 class="mb-0">{{ number_format($totalCredit, 2) }}</h2>
+                            <h2 class="mb-0">{{ number_format($totalCredit, 2) }}৳</h2>
                         </div>
                     </div>
                 </div>
@@ -21,11 +21,13 @@
                 <div class="card bg-danger text-white shadow-lg hover-transform">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <i class="fas fa-hand-holding-usd fa-3x opacity-75"></i>
+
+                                <img src="{{ asset('uploads/total expense.png') }}" style="width: 40px; height: 35px" />
+
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h5 class="card-title mb-1">Total Expenses</h5>
-                            <h2 class="mb-0">{{ number_format($totalDebit, 2) }}</h2>
+                            <h2 class="mb-0">{{ number_format($totalDebit, 2) }}৳</h2>
                         </div>
                     </div>
                 </div>
@@ -34,11 +36,11 @@
                 <div class="card {{ $netTotal < 0 ? 'bg-danger' : 'bg-primary' }} text-white shadow-lg hover-transform">
                     <div class="card-body d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <i class="fas fa-balance-scale-right fa-3x opacity-75"></i>
+                            <img src="{{ asset('uploads/total balance.png') }}" style="width: 40px; height: 35px" />
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h5 class="card-title mb-1">Net Balance</h5>
-                            <h2 class="mb-0">{{ number_format($netTotal, 2) }}</h2>
+                            <h2 class="mb-0">{{ number_format($netTotal, 2) }}৳</h2>
                         </div>
                     </div>
                 </div>
@@ -145,7 +147,7 @@
                                                 </span>
                                             </td>
                                             <td class="text-end fw-medium {{ $transaction->transaction_type == 'debit' ? 'text-danger' : 'text-success' }}">
-                                                {{ number_format($transaction->amount, 2) }}
+                                                {{ number_format($transaction->amount, 2) }}৳
                                             </td>
                                             <td>{{ $transaction->purpose->name ?? '-' }}</td>
                                             <td class="pe-4">
@@ -200,10 +202,10 @@
                                             </td>
                                             <td>#{{ $transfer->id }}</td>
                                             <td class="text-end fw-medium text-primary">
-                                                {{ number_format($transfer->transfer_amount, 2) }}
+                                                {{ number_format($transfer->transfer_amount, 2) }}৳
                                             </td>
-                                            <td>{{ $transfer->from_balance ?? '-' }}</td>
-                                            <td>{{ $transfer->to_balance ?? '-' }}</td>
+                                            <td>{{ $transfer->from_balance ?? '-' }}৳</td>
+                                            <td>{{ $transfer->to_balance ?? '-' }}৳</td>
                                             <td class="pe-4 text-danger fw-medium">
                                                 {{ number_format($transfer->cost, 2) }}
                                             </td>
@@ -224,7 +226,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="d-flex justify-content-end mt-4">
+        <div class="d-flex justify-content-center mt-4">
             <nav aria-label="Page navigation">
                 <ul class="pagination pagination-separated pagination-lg">
                     @if ($transactions->onFirstPage())
@@ -259,6 +261,7 @@
                 </ul>
             </nav>
         </div>
+
     </div>
 @endsection
 
