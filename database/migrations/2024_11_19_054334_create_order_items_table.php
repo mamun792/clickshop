@@ -20,15 +20,7 @@ return new class extends Migration
 
             // Product quantity and price
             $table->integer('quantity');
-            $table->decimal('price', 10, 2);
-
-            // Coupon and campaign details
-            $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('set null')->onUpdate('cascade');
-            $table->string('code')->nullable();
-            $table->decimal('discount', 10, 2)->nullable();
-            $table->enum('discount_type', ['fixed', 'percent'])->nullable();
-
-            // Campaign related to the item
+           
             $table->foreignId('campaign_id')->nullable()->constrained()->onDelete('set null')->onUpdate('cascade');
 
             $table->timestamps();
