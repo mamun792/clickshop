@@ -26,15 +26,7 @@ return new class extends Migration
 
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->integer('attribute_id');
-            $table->integer('attribute_option_id');
-            $table->integer('quantity');
-            $table->decimal('price', 10, 2);
-            $table->integer('sold_quantity')->default(0);
-            // enum typle enable or disable
-            $table->enum('status', ['enable', 'disable'])->default('enable');
-            $table->foreignId('combination_id')->nullable()
-            ->constrained('product_attribute_combinations')
-            ->onDelete('cascade');
+            
             $table->timestamps();
         });
 
